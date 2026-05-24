@@ -53,8 +53,10 @@ export function cn(...inputs: ClassValue[]) {
 }
 ```
 
-Dependencias que instala `init`: `class-variance-authority`, `clsx`, `tailwind-merge`, `lucide-react`,
-`tw-animate-css`.
+Deps base (las añade `init` en la Vía A; instálalas tú en la Vía B): `class-variance-authority`, `clsx`,
+`tailwind-merge`, `tw-animate-css`, `radix-ui` (paquete unificado). `lucide-react` para iconos.
+La Vía A además añade `shadcn` a `dependencies` y, con el preset `nova`, `@fontsource-variable/geist`.
+Nunca debe aparecer `tailwindcss-animate` (eso es v3).
 
 ---
 
@@ -380,10 +382,19 @@ En TanStack Start (Vite) la resolución en build se consigue con `resolve: { tsc
 
 ---
 
-## 8. Fallback manual (si el CLI falla o intenta degradar)
+## 8. Vía B — receta determinista SIN prompts (agentes/CI y recovery)
 
-1. `git checkout .` para revertir lo que tocó el CLI.
-2. Instalar deps: `pnpm add class-variance-authority clsx tailwind-merge lucide-react tw-animate-css`
-3. Crear `src/lib/utils.ts` (sección 2), `components.json` (sección 3) y el bloque CSS (sección 4) a mano.
-4. Añadir componentes con `pnpm dlx shadcn@latest add <componente>` (con `components.json` ya presente,
-   solo copia el componente, no reconfigura el proyecto).
+Es la vía **fiable**: el `init` interactivo se cuelga en automatización (los prompts no se pueden pipear)
+y tiene la trampa del RSC. Esta receta reproduce lo que hace `init` pero sin prompts. También sirve como
+**recovery** si el `init` falló (en ese caso, empieza por `git checkout .` para revertir lo que tocó).
+
+1. Deps: `pnpm add class-variance-authority clsx tailwind-merge tw-animate-css radix-ui`
+   (`lucide-react` ya suele estar; añádelo si no). **No** añadas `tailwindcss-animate`.
+2. Crear `src/lib/utils.ts` (§2), `components.json` (§3, con `rsc:false`/`config:""`/`css` real) y pegar
+   el bloque CSS (§4) en el fichero de entrada — todo a mano, verbatim.
+3. `pnpm dlx shadcn@latest add button --yes` → con `components.json` presente, `add` solo copia el
+   componente (no reconfigura, no prompts) e instala sus deps de radix.
+4. Verificar: `pnpm build` OK y el CSS compilado contiene `.bg-primary`/`.bg-card` y `:is(.dark *)`.
+
+> Diferencia vs Vía A: aquí NO se añade el paquete `shadcn` a `dependencies` (usamos `dlx`), el
+> `package.json` queda más limpio.

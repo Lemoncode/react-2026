@@ -35,3 +35,7 @@ Vamos ahora a pedirle que ejecute ese skills
 ```
 Vamos a probar el skill que acabas de crear, dale caña 
 ```
+
+Una vez que vemos que todo ok le indicamos que revise y mejor el skill con lo que ha aprendido, y que lo deje perfecto para que lo pueda usar cualquiera
+
+```
