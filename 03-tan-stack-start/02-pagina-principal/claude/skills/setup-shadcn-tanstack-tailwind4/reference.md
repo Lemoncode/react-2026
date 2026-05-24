@@ -11,12 +11,28 @@ Detalle verbatim para no improvisar. Fuentes oficiales:
 
 ## 1. Comandos por gestor de paquetes
 
-| Acción            | pnpm                                  | npm                                  | yarn                              | bun                              |
-|-------------------|---------------------------------------|--------------------------------------|-----------------------------------|----------------------------------|
-| init              | `pnpm dlx shadcn@latest init`         | `npx shadcn@latest init`             | `yarn dlx shadcn@latest init`     | `bunx --bun shadcn@latest init`  |
-| añadir componente | `pnpm dlx shadcn@latest add button`   | `npx shadcn@latest add button`       | `yarn dlx shadcn@latest add button` | `bunx --bun shadcn@latest add button` |
+| Acción            | pnpm                                       | npm                                  | yarn                                  | bun                              |
+|-------------------|--------------------------------------------|--------------------------------------|---------------------------------------|----------------------------------|
+| init              | `pnpm dlx shadcn@latest init -b radix -p nova` | `npx shadcn@latest init -b radix -p nova` | `yarn dlx shadcn@latest init -b radix -p nova` | `bunx --bun shadcn@latest init -b radix -p nova` |
+| añadir componente | `pnpm dlx shadcn@latest add button --yes`  | `npx shadcn@latest add button --yes` | `yarn dlx shadcn@latest add button --yes` | `bunx --bun shadcn@latest add button --yes` |
 
 > Usar SIEMPRE `shadcn@latest` (no versiones fijas antiguas: ahí estaba el bug del downgrade a Tailwind 3).
+
+**Flags del `init` (CLI v4.x, probado con `shadcn@4.8.0`):** ya NO existe `--base-color`.
+- `-b, --base <radix|base>` → librería de componentes (`radix` = el shadcn clásico).
+- `-p, --preset <nombre>` → tema (`nova`=Lucide/Geist → estilo `radix-nova`; otros: vega, maia, lyra,
+  mira, luma, sera, custom).
+- `--no-reinstall` evita el prompt de reinstalar componentes existentes al re-correr.
+
+**`init` es interactivo y NO automatizable por pipe** (`--yes` no salta los prompts y el CLI vacía el
+stdin entre prompts). Responde a mano, en este orden:
+`TypeScript → yes` · `style → New York` · **`React Server Components → NO`** (default es `yes`; aceptarlo
+hace que escriba `css: "app/globals.css"` + `config: "tailwind.config.js"` y el init falle con `ENOENT`).
+
+Tras `init`, `add` SÍ es no-interactivo con `--yes` (lee `components.json`).
+
+`add` instala el paquete unificado **`radix-ui`** (los componentes hacen `import { Slot } from "radix-ui"`,
+no `@radix-ui/react-*`).
 
 Comprobar la versión de Tailwind antes y después:
 ```bash

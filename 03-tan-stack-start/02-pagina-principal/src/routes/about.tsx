@@ -1,4 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
 export const Route = createFileRoute('/about')({
   component: About,
@@ -17,6 +24,24 @@ function About() {
           modern SSR defaults. Use this as a clean foundation, then layer in
           your own routes, styling, and add-ons.
         </p>
+
+        {/* DEMO shadcn/ui — borrar tras verificar el setup */}
+        <div className="mt-8 flex flex-wrap items-center gap-3 rounded-xl border bg-card p-4 text-card-foreground">
+          <Button>Primary</Button>
+          <Button variant="secondary">Secondary</Button>
+          <Button variant="outline">Outline</Button>
+          <Button variant="destructive">Destructive</Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">Menú shadcn</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              <DropdownMenuItem>Opción A</DropdownMenuItem>
+              <DropdownMenuItem>Opción B</DropdownMenuItem>
+              <DropdownMenuItem>Opción C</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </section>
     </main>
   )

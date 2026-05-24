@@ -23,6 +23,10 @@ Ninguna obligatoria. (Formato basado en la convención del skill `write-a-skill`
   campo `tailwind.config` va vacío (`""`).
 - **Animaciones v4** — NUNCA añadir `tailwindcss-animate`. En v4 se usa `tw-animate-css`.
 - **Directiva CSS v4** — NUNCA reemplazar `@import "tailwindcss"` por `@tailwind base/components/utilities`.
+- **RSC = NO** — en el prompt "React Server Components?" responde **NO** (el default es `yes` y, si lo
+  aceptas, el CLI escribe rutas de Next.js en `components.json` y el `init` falla con `ENOENT`).
+- **init es interactivo** — responde los prompts a mano; `--yes` no los salta y el CLI vacía el stdin
+  entre prompts (no se pueden automatizar por pipe). Verifica `components.json` justo después.
 - **Árbol git limpio antes de empezar** — commit/stash previo, para revisar el diff de `init` y poder
   revertir con `git checkout .` si algo va mal.
 - **Verificar v4 antes y después** — si el post-check falla, revertir y reportar; no continuar.
@@ -30,29 +34,33 @@ Ninguna obligatoria. (Formato basado en la convención del skill `write-a-skill`
 ## Fases (comandos exactos en [reference.md](reference.md))
 
 ### 0. Prerequisitos / guardrail
-- Confirmar que es TanStack Start: `vite.config.*` incluye `tanstackStart()` y existe `src/routes/__root.tsx`.
-- `pnpm ls tailwindcss` → debe ser `4.x`. Confirmar `@tailwindcss/vite` en `vite.config.*` y
-  `@import "tailwindcss"` en el CSS de entrada.
-- Detectar gestor de paquetes y el fichero CSS de entrada (p.ej. `src/styles.css`).
-- Confirmar alias `@/*` → `./src/*` en `tsconfig.json` (si falta, añadirlo — **sin tocar nada de Tailwind**).
-- Anotar la versión exacta de `tailwindcss` para comparar luego.
+- Es TanStack Start: `vite.config.*` con `tanstackStart()` y existe `src/routes/__root.tsx`.
+- `pnpm ls tailwindcss` → `4.x` (anótala). Confirmar `@tailwindcss/vite` en `vite.config.*` y
+  `@import "tailwindcss"` en el CSS de entrada (p.ej. `src/styles.css`). Detectar gestor de paquetes.
+- Alias `@/*` → `./src/*` en `tsconfig.json` (si falta, añadirlo — **sin tocar Tailwind**).
 
-### 1. `shadcn init` (CLI oficial)
+### 1. `shadcn init` (CLI oficial) — **es INTERACTIVO**
 ```bash
-pnpm dlx shadcn@latest init
+pnpm dlx shadcn@latest init -b radix -p nova
 ```
-Responder: base color `neutral` (o el preferido), usar el CSS existente, CSS variables = **yes**.
-Esto crea `components.json` y `src/lib/utils.ts`, instala `class-variance-authority clsx tailwind-merge
-tw-animate-css`, e inyecta en el CSS las variables oklch (`:root`/`.dark`), `@custom-variant dark` y
-`@theme inline`.
+CLI v4.x (probado con `shadcn@4.8.0`): ya NO hay `--base-color`; `-b radix` = librería de componentes,
+`-p nova` = preset/tema (`radix-nova`). Responde los prompts **a mano** en este orden:
+`TypeScript → yes` · `style → New York` · **`RSC → NO`** (¡el default `yes` rompe el init, ver regla arriba!).
+
+`init` crea `components.json` y `src/lib/utils.ts`, instala `class-variance-authority clsx tailwind-merge
+tw-animate-css radix-ui shadcn`, e inyecta en el CSS las variables oklch (`:root`/`.dark`),
+`@custom-variant dark` y `@theme inline`. Detalle y flags en [reference.md](reference.md) §1.
 
 ### 2. POST-INIT VERIFICATION (guardrail crítico) — si algo falla → revertir
 - `git diff package.json`: `tailwindcss` sigue `^4.x` y **no** aparece `tailwindcss-animate`.
 - **No** existe `tailwind.config.{js,ts}`.
 - El CSS conserva `@import "tailwindcss"` (no `@tailwind base`).
-- `components.json`: `tailwind.config: ""`, `css` apunta al fichero correcto, `cssVariables: true`.
-- Si el proyecto ya tenía un tema custom: revisar el diff por **colisiones de nombres** de variables
-  (`--background`, `--primary`, etc.) y resolverlas a mano.
+- `components.json`: `rsc: false`, `tailwind.config: ""`, `css` apunta al fichero real (p.ej.
+  `src/styles.css`), `cssVariables: true`. **Si quedó `rsc: true` / `config: "tailwind.config.js"` /
+  `css: "app/globals.css"`** (respondiste mal a RSC) → corregirlo a mano y re-inyectar el CSS: volver a
+  `init` o pegar el bloque de [reference.md](reference.md) §4 (no hace falta `tailwind.config.js`).
+- Tema custom previo: revisar el diff por **colisiones de nombres** de variables (`--background`,
+  `--primary`…). Nota: en v4 un `body {…}` sin capa gana a `@layer base { body … }` de shadcn.
 
 ### 3. Smoke test
 ```bash
@@ -64,12 +72,17 @@ Usar el `Button` una vez y arrancar `pnpm dev` para confirmar que aplica estilos
 ```bash
 pnpm dlx shadcn@latest add dropdown-menu button
 ```
-- Crear `src/components/theme-provider.tsx` (usa `ScriptOnce` de `@tanstack/react-router` para evitar el
-  FOUC + `localStorage`; código en reference.md).
-- En `src/routes/__root.tsx`: envolver `<Outlet/>` con
-  `<ThemeProvider defaultTheme="system" storageKey="theme">` y añadir `suppressHydrationWarning` al `<html>`.
+**Primero comprueba si ya hay dark mode basado en la clase `.dark`** (un script anti-FOUC en `__root.tsx`
+o un toggle que haga `documentElement.classList.add('dark')`). Si existe, shadcn **ya es compatible** (su
+`@custom-variant dark` usa `.dark`): NO crees un `ThemeProvider` duplicado (chocaría) — los componentes ya
+cambian con el toggle actual; como mucho, dale estilo shadcn reutilizando su lógica.
+
+**Solo si NO hay sistema previo**, móntalo (código en [reference.md](reference.md) §6):
+- Crear `src/components/theme-provider.tsx` (usa `ScriptOnce` de `@tanstack/react-router` para evitar FOUC
+  + `localStorage`).
+- En `src/routes/__root.tsx`: envolver el contenido con `<ThemeProvider defaultTheme="system"
+  storageKey="theme">` y añadir `suppressHydrationWarning` al `<html>`.
 - Crear `src/components/mode-toggle.tsx` (DropdownMenu + iconos `Sun`/`Moon` de `lucide-react`).
-- Si el proyecto ya tiene un `ThemeToggle` propio, integrarlo con `useTheme()` o reemplazarlo.
 
 ## Verification Checklist
 

@@ -29,3 +29,9 @@ Así que abrimos claude le pedimos que vaya en modo plan, o si no estamo seguros
 ```
 Me hace falta hacer setup de shadCN con Tailwind 4 (que ya está instalado en el proyecto), pasa una cosa, en otro proyecto te lo pedí pero la cagaste, porque tenías documentación antigua y me llegaste a hacer un downgrade a tailwind 3, así que he buscado la documentación oficial, aquí la tienes: https://ui.shadcn.com/docs/installation/tanstack quiero que me crees un skill para poder integrar shadCN en un proyecto tanStackStart con Tailwind 4, siguiendo la documentación oficial, hazlo paso a paso y con comandos concretos, no te olvides de nada, y si hay algo que no entiendes me lo preguntas antes de crear el skill, ese skill se puede llamar setup-shadcn-tanstack-tailwind4
 ```
+
+Vamos ahora a pedirle que ejecute ese skills
+
+```
+Vamos a probar el skill que acabas de crear, dale caña 
+```
