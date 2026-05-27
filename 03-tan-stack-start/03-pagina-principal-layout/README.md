@@ -31,7 +31,7 @@ d2e92c0f5bc6b23e86cc901026fd51c3
 Vamos a por el prompt, vamos a hacer un `/grill-me` para que nos pregunte y saque un resultado más fino
 
 ```md
-/grill-me quiero ahora montar el layout / html completa de la página Home, quiero que sea responsive, que uses tailwind y componentes shadcn donde aplique, quiero que lo que son textos e imagenes lo leas de Content Island (ya esta el modelo y la llamada a server function), menos la parte de calendario que si es dinámica, y más adelante la conectaremos con un servicio, y el titulo del mes actual también leelo de la fecha actual, tengo un mock que puedes tomar como idea para implementar esto (ojo cambia lo que veas y acuerdate de usar shadCN donde aplique):
+/grill-me quiero ahora montar el layout / html completa de la página Home, quiero que sea responsive, que uses tailwind y componentes shadcn donde aplique, quiero que lo que son textos e imagenes lo leas de Content Island (ya esta el modelo y la llamada a server function), menos la parte de calendario que si es dinámica, y más adelante la conectaremos con un servicio, y el titulo del mes actual también leelo de la fecha actual, tengo un mock que puedes tomar como idea para implementar esto (ojo cambia lo que veas y acuerdate de usar shadCN donde aplique), no implementes ahora el calendario lo haremos en un segundo paso, deja un place holder
 
 import React, { useMemo, useState } from "react";
 import { motion } from "framer-motion";
