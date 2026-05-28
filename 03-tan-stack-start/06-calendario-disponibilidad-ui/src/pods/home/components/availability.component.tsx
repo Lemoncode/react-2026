@@ -11,9 +11,16 @@ import { getAvailabilityByMonth } from "../availability.api";
 
 interface AvailabilityProps {
   availability: AvailabilitySection;
-  currentMonth: string;
   blocks: CalendarBlockVm[];
 }
+
+const formatMonthLabel = (date: Date): string => {
+  const label = date.toLocaleDateString("es-ES", {
+    month: "long",
+    year: "numeric",
+  });
+  return label.charAt(0).toUpperCase() + label.slice(1);
+};
 
 const startOfToday = (): Date => {
   const d = new Date();
@@ -29,7 +36,6 @@ const addDays = (date: Date, n: number): Date => {
 
 export const Availability = ({
   availability,
-  currentMonth,
   blocks,
 }: AvailabilityProps) => {
   const today = useMemo(startOfToday, []);
@@ -76,7 +82,7 @@ export const Availability = ({
               <CalendarDays className="h-4 w-4" /> {availability.topTitle}
             </p>
             <h2 className="text-3xl font-semibold text-[var(--sea-ink)]">
-              {currentMonth}
+              {formatMonthLabel(visibleMonth)}
             </h2>
           </div>
           <div className="flex flex-wrap gap-3 text-sm text-[var(--sea-ink-soft)]">

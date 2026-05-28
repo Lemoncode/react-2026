@@ -6,15 +6,10 @@ import { Availability } from "./components/availability.component";
 
 interface HomeProps {
   content: FullMainPageVm;
-  currentMonth: string;
   availability: CalendarBlockVm[];
 }
 
-export const Home: React.FC<HomeProps> = ({
-  content,
-  currentMonth,
-  availability,
-}) => {
+export const Home: React.FC<HomeProps> = ({ content, availability }) => {
   return (
     <main className="pb-8">
       <Hero hero={content.heroSection} />
@@ -22,7 +17,6 @@ export const Home: React.FC<HomeProps> = ({
         <Features features={content.featureSection} />
         <Availability
           availability={content.availabilitySection}
-          currentMonth={currentMonth}
           blocks={availability}
         />
       </section>

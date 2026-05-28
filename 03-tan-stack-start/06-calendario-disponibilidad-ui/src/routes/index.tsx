@@ -3,14 +3,6 @@ import { getHomePageContent } from "@/pods/home/home.api";
 import { getAvailabilityByMonth } from "@/pods/home/availability.api";
 import { Home } from "@/pods/home";
 
-const getCurrentMonthLabel = (): string => {
-  const label = new Date().toLocaleDateString("es-ES", {
-    month: "long",
-    year: "numeric",
-  });
-  return label.charAt(0).toUpperCase() + label.slice(1);
-};
-
 export const Route = createFileRoute("/")({
   loader: async () => {
     const now = new Date();
@@ -24,22 +16,12 @@ export const Route = createFileRoute("/")({
         },
       }),
     ]);
-    return {
-      content,
-      currentMonth: getCurrentMonthLabel(),
-      availability,
-    };
+    return { content, availability };
   },
   component: App,
 });
 
 function App() {
-  const { content, currentMonth, availability } = Route.useLoaderData();
-  return (
-    <Home
-      content={content}
-      currentMonth={currentMonth}
-      availability={availability}
-    />
-  );
+  const { content, availability } = Route.useLoaderData();
+  return <Home content={content} availability={availability} />;
 }
