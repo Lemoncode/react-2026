@@ -1,9 +1,9 @@
-# Calendario - Backend
+# Calendario - UI
 
-Ya tenemos la infra, siguiente paso vamos a crear una server function dentro nuestro proyecto de tan stack start (si, para proyectos simples no nos hace falta crear un proyecto de backend), el que vamos a leer los datos de diposnibilidad para un mes dado, y eso lo leeremos en la página principal, y de momento lo mostraremos por consola.
+Ya tengo una server function que me carga la diponibilidad de un mes dado, ahora quiero conectar el UI con esa función para mostrar la disponibilidad en el calendario, y después permitir que el usuario pueda elegir rangos de fechas, quiero reservar desde este día a este otro día.
 
-¿Qué prompt usaríamos?
+Así que vamos por pasos, primer prompt
 
-```md
-/grill-me Ahora ya tengo la base de datos MongoDB con datos montada en un contenedor de docker, siguiente paso, quiero exponer una variable de entorno con la URL de conexión a la base de datos, y luego crear una server function dentro de mi proyecto de tan stack start, que se conecte a la base de datos y lea los datos de disponibilidad para un mes dado (esa funcion tendra el numero del mes como parametro siendo 1 enero), y eso lo leeremos en la página principal, y de momento lo mostraremos por consola, no quiero usar mongoose, ni prisma, directamente el driver nativo de MongoDB
+```
+/grill-me ahora quiero en la sección de disponibilidad añadir un calendario que muestre la disponibilidad del mes, y que permita seleccionar rangos de fechas para reservar, para los rangos de fecha creo que lo mejor es usar la server function que hemos creado, planteate si ampliarla a que traiga varios meses o no, y ten en cuenta que un usuario podría plantear que, por ejemplo, un usuario quiera reservar del 30 de marzo al 2 de abril,en un primer paso nos podemos centrar en mostrar la información, y ya despues ir a por la selección ,pero quiero que lo tengas en cuenta ya que tienes que mirar si ShadCN ofrece un componente como este y que de esta funcionalidad
 ```

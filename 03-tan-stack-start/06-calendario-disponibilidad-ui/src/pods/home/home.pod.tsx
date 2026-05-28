@@ -1,4 +1,5 @@
 import type { FullMainPageVm } from "./home.vm";
+import type { CalendarBlockVm } from "./availability.vm";
 import { Hero } from "./components/hero.component";
 import { Features } from "./components/features.component";
 import { Availability } from "./components/availability.component";
@@ -6,9 +7,14 @@ import { Availability } from "./components/availability.component";
 interface HomeProps {
   content: FullMainPageVm;
   currentMonth: string;
+  availability: CalendarBlockVm[];
 }
 
-export const Home: React.FC<HomeProps> = ({ content, currentMonth }) => {
+export const Home: React.FC<HomeProps> = ({
+  content,
+  currentMonth,
+  availability,
+}) => {
   return (
     <main className="pb-8">
       <Hero hero={content.heroSection} />
@@ -17,6 +23,7 @@ export const Home: React.FC<HomeProps> = ({ content, currentMonth }) => {
         <Availability
           availability={content.availabilitySection}
           currentMonth={currentMonth}
+          blocks={availability}
         />
       </section>
     </main>

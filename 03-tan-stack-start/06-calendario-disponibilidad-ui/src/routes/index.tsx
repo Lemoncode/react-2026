@@ -17,16 +17,29 @@ export const Route = createFileRoute("/")({
     const [content, availability] = await Promise.all([
       getHomePageContent(),
       getAvailabilityByMonth({
-        data: { month: now.getMonth() + 1, year: now.getFullYear() },
+        data: {
+          month: now.getMonth() + 1,
+          year: now.getFullYear(),
+          monthsAhead: 1,
+        },
       }),
     ]);
-    console.log("[home loader] availability", availability);
-    return { content, currentMonth: getCurrentMonthLabel() };
+    return {
+      content,
+      currentMonth: getCurrentMonthLabel(),
+      availability,
+    };
   },
   component: App,
 });
 
 function App() {
-  const { content, currentMonth } = Route.useLoaderData();
-  return <Home content={content} currentMonth={currentMonth} />;
+  const { content, currentMonth, availability } = Route.useLoaderData();
+  return (
+    <Home
+      content={content}
+      currentMonth={currentMonth}
+      availability={availability}
+    />
+  );
 }
