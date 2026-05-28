@@ -9,7 +9,10 @@
     "dev": "vite dev --port 3000",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "db:up": "docker compose up -d mongo",
+    "db:down": "docker compose down",
+    "db:logs": "docker compose logs -f mongo"
   },
   "dependencies": {
     "@content-island/api-client": "^0.20.0",
