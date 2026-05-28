@@ -16,3 +16,10 @@ Este es muy facil
 Debajo de disponibilidad siempre pone "Mayo de 2026" lo suyo es que ponga el mes que se está mostrando.
 ```
 
+## Seleccion
+
+Ahora vamos a por la selección, quiero que el usario pueda realizar la selección y que al pulsar en el botón de consultar diposnibilidad, de momento me muestre un console.log con la seleccion de fechas
+
+```md
+/grill-me Ahora vamos a por la selección, quiero que el usario pueda realizar la selección y que al pulsar en el botón de consultar disponibilidad, de momento me muestre un console.log con la seleccion de fechas
+```
