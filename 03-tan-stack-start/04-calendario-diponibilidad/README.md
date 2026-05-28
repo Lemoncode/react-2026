@@ -22,24 +22,7 @@ Ahora nos hacen falta datos, así que le voy a pedir a Claude que me genere un c
 ```
 /grill-me Ahora quiero un console runner para crear la base de datos y meter datos de prueba, el runner se llamará `seed.ts` y lo que hará es conectarse a la base de datos, crear una colección de `availabilities`, tomando como fecha el mes actual y rellenado aleatoriamente a 6 meses vista, y metiendo algunos documentos de ejemplo con el siguiente formato:
 
-{
-  "date": "2024-06-01",
-  "slots": [
-    {
-      "start": "09:00",
-      "end": "10:00",
-      "available": true
-    },
-    {
-      "start": "10:00",
-      "end": "11:00",
-      "available": false
-    }
-  ]
-}
-
-
-Te paso toda la info sobre este documento:
+Te paso toda la info sobre este documento (coincide con el MML del proyecto):
 
 # Diseño de base de datos MongoDB para gestión de reservas de una vivienda vacacional
 
@@ -231,7 +214,10 @@ Comandos disponibles:
 pnpm db:up     # Arranca Mongo en background (puerto 27018)
 pnpm db:down   # Para el contenedor
 pnpm db:logs   # Sigue los logs en tiempo real
+pnpm db:seed   # Borra y repuebla properties + calendarBlocks con datos de prueba
 ```
+
+> El seed (`scripts/seed.ts`) dropea las colecciones `properties` y `calendarBlocks` y las repuebla con 1 villa fija + ~30 reservas/bloqueos (4 escenarios deterministas + el resto aleatorio con Faker, sin solapes entre activos). No afecta a otras colecciones de la BBDD.
 
 Connection string (ya cargada en `.env` como `MONGO_URI`):
 
