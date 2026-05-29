@@ -13,7 +13,7 @@ A tener en cuenta los datos de las fechas de reserva los podemos pasar por query
 Empezamos con la validación del formulario:
 
 ```
-Como siguiente paso quiero validar el formulario, vamos a empezar facil, de primeras vamos a validar que el nombre este bien informado, vamos a usar TanStack Form y Zod para esto, y vamos a mostrar un mensaje de error debajo del campo de nombre si el nombre no es correcto, el mensaje de error debe desaparecer cuando el usuario corrija el error.
+/grill-me Como siguiente paso quiero validar el formulario, vamos a empezar facil, de primeras vamos a validar que el nombre este bien informado, vamos a usar TanStack Form y Zod para esto, y vamos a mostrar un mensaje de error debajo del campo de nombre si el nombre no es correcto, el mensaje de error debe desaparecer cuando el usuario corrija el error.
 
 Tan Stack Form obliga a crear unos wrappers alrededor de los componentes, no quiero ir repetiendolos, para ello vamos a crear dentor de src/components una carpeta que llamaremos form donde vamos a poner los wrappers por ejemplo de el input del campo nombre
 ```

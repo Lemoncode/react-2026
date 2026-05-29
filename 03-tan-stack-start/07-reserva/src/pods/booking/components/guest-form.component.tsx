@@ -1,4 +1,9 @@
+import { useRef } from "react";
+import { useForm } from "@tanstack/react-form";
 import { Button } from "@/components/ui/button";
+import { TextField } from "@/components/form";
+import { useToast } from "@/components/ui/toast";
+import { guestFormSchema, type GuestFormValues } from "../guest-form.schema";
 import type { GuestDetails } from "../booking.model";
 
 interface GuestFormProps {
@@ -13,10 +18,7 @@ interface FieldProps {
 
 const Field = ({ id, label, children }: FieldProps) => (
   <div className="flex flex-col gap-1.5">
-    <label
-      htmlFor={id}
-      className="text-sm font-medium text-[var(--sea-ink)]"
-    >
+    <label htmlFor={id} className="text-sm font-medium text-[var(--sea-ink)]">
       {label}
     </label>
     {children}
@@ -27,32 +29,56 @@ const fieldClassName =
   "h-12 w-full rounded-2xl border border-[var(--sand)] bg-[var(--card)] px-4 text-base text-[var(--sea-ink)] outline-none transition-colors placeholder:text-[var(--sea-ink-soft)]/60 focus-visible:border-[var(--lagoon-deep)] focus-visible:ring-2 focus-visible:ring-[var(--lagoon-deep)]/20";
 
 export const GuestForm = ({ onSubmit }: GuestFormProps) => {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    onSubmit({
-      firstName: String(data.get("firstName") ?? "").trim(),
-      lastName: String(data.get("lastName") ?? "").trim(),
-      email: String(data.get("email") ?? "").trim(),
-      phone: String(data.get("phone") ?? "").trim(),
-      guests: Number(data.get("guests") ?? 1),
-      comments: String(data.get("comments") ?? "").trim(),
-    });
-  };
+  const { toast } = useToast();
+  const formRef = useRef<HTMLFormElement>(null);
+
+  // Only `firstName` is validated for now; the remaining fields are still
+  // native and read from FormData on submit (migrated in a second step).
+  const form = useForm({
+    defaultValues: { firstName: "" } as GuestFormValues,
+    validators: { onChange: guestFormSchema, onBlur: guestFormSchema },
+    onSubmit: ({ value }) => {
+      const data = formRef.current
+        ? new FormData(formRef.current)
+        : new FormData();
+      onSubmit({
+        firstName: value.firstName.trim(),
+        lastName: String(data.get("lastName") ?? "").trim(),
+        email: String(data.get("email") ?? "").trim(),
+        phone: String(data.get("phone") ?? "").trim(),
+        guests: Number(data.get("guests") ?? 1),
+        comments: String(data.get("comments") ?? "").trim(),
+      });
+    },
+    onSubmitInvalid: () => {
+      toast({
+        variant: "error",
+        title: "Revisa el formulario",
+        description: "Hay errores en el formulario. Revisa los campos.",
+      });
+    },
+  });
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form
+      ref={formRef}
+      noValidate
+      onSubmit={(event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        void form.handleSubmit();
+      }}
+      className="space-y-5"
+    >
       <div className="grid gap-5 sm:grid-cols-2">
-        <Field id="firstName" label="Nombre">
-          <input
-            id="firstName"
-            name="firstName"
-            type="text"
-            autoComplete="given-name"
-            placeholder="María"
-            className={fieldClassName}
-          />
-        </Field>
+        <TextField
+          form={form}
+          name="firstName"
+          label="Nombre"
+          type="text"
+          autoComplete="given-name"
+          placeholder="María"
+        />
         <Field id="lastName" label="Apellido">
           <input
             id="lastName"

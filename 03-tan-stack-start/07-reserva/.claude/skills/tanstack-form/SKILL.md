@@ -1,44 +1,51 @@
 ---
 name: tanstack-form
 description: >-
-  Use this skill whenever you build or modify a form in apps/web. Enforces TanStack Form + Zod,
-  reuse of wrappers in apps/web/src/common/components/forms, and the agreed UX rules
-  (errors after blur/submit, red toast on invalid submit, full accessibility).
+  Use this skill whenever you build or modify a form in this repo. Enforces TanStack Form + Zod,
+  reuse of wrappers in src/components/form, and the agreed UX rules (errors after blur/submit that
+  clear live on correction, red toast on invalid submit, full accessibility).
   Trigger on tasks mentioning "formulario", "form", "validación de campos", "TanStack Form",
-  "Zod schema", or when adding/editing files under apps/web/src/pods/**/*-form.component.tsx.
+  "Zod schema", or when adding/editing files under src/pods/**/*-form.component.tsx.
 ---
 
 # tanstack-form
 
 ## Core Principle
 
-Todos los formularios del frontend usan **TanStack Form + Zod** y consumen (o amplían) los wrappers de `apps/web/src/common/components/forms`. Nunca crear inputs controlados ad-hoc dentro de un pod si ya existe — o puede existir — un wrapper reutilizable.
+Todos los formularios del frontend usan **TanStack Form + Zod** y consumen (o amplían) los wrappers de `src/components/form`. Nunca crear inputs controlados ad-hoc dentro de un pod si ya existe — o puede existir — un wrapper reutilizable.
 
 ## Stack y rutas críticas
 
 - **Form lib**: `@tanstack/react-form` (`useForm`, `form.Field`, `AnyFieldApi`).
-- **Validación**: `zod`. Un esquema por formulario en `<pod>/<form>.schema.ts`, exportando también `type FormValues = z.infer<typeof schema>`.
-- **Wrappers reutilizables**: `apps/web/src/common/components/forms/` (barrel `index.ts`).
-- **Import alias**: `#common/components/forms`.
-- **Componente de referencia**: `apps/web/src/common/components/forms/text-field.component.tsx`.
-- **Pod de referencia**: `apps/web/src/pods/login/`
-  - `login-form.schema.ts`
-  - `login-form.component.tsx`
-  - `index.ts`
+- **Validación**: `zod` (v4). Un esquema por formulario en `<pod>/<form>.schema.ts`, exportando también `type FormValues = z.infer<typeof schema>`.
+- **Wrappers reutilizables**: `src/components/form/` (barrel `index.ts`).
+- **Import alias**: `@/components/form`.
+- **Estilos**: Tailwind v4 + shadcn con **CSS vars** del repo (`--sea-ink`, `--sea-ink-soft`, `--sand`, `--lagoon-deep`, `--card`, `--destructive`). **No DaisyUI.**
+- **Toast**: componente **Radix Toast** hecho a mano en `src/components/ui/toast.tsx` (`ToastProvider` + hook `useToast`), montado en `src/routes/__root.tsx`. **No DaisyUI.**
+- **Componente de referencia**: `src/components/form/text-field.component.tsx`.
+- **Pod de referencia**: `src/pods/booking/`
+  - `guest-form.schema.ts`
+  - `components/guest-form.component.tsx`
 
 ## Workflow obligatorio al construir un formulario
 
 1. Define el esquema Zod en `<form>.schema.ts` y exporta `type FormValues = z.infer<typeof schema>`.
-2. Crea el componente del formulario en su pod usando:
+2. Crea/edita el componente del formulario en su pod usando:
    ```ts
    const form = useForm({
      defaultValues: { ... } as FormValues,
-     validators: { onBlur: schema, onSubmit: schema },
-     onSubmit: async ({ value }) => { ... },
-     onSubmitInvalid: () => setToast('Hay errores en el formulario. Revisa los campos.'),
+     validators: { onChange: schema, onBlur: schema },
+     onSubmit: ({ value }) => { ... },
+     onSubmitInvalid: () =>
+       toast({
+         variant: "error",
+         title: "Revisa el formulario",
+         description: "Hay errores en el formulario. Revisa los campos.",
+       }),
    });
    ```
-3. Para cada campo, **busca primero** un wrapper en `apps/web/src/common/components/forms`. Si existe, úsalo:
+   `onChange` **además** de `onBlur` es lo que permite que el error **desaparezca en vivo** cuando el usuario corrige (el render del error sigue gateado por `isBlurred || isTouched`, así que no es agresivo al empezar a teclear).
+3. Para cada campo, **busca primero** un wrapper en `src/components/form`. Si existe, úsalo:
    ```tsx
    <TextField form={form} name="email" label="Email" type="email" autoComplete="email" />
    ```
@@ -51,19 +58,28 @@ Todos los formularios del frontend usan **TanStack Form + Zod** y consumen (o am
      void form.handleSubmit();
    }}
    ```
-5. En `onSubmitInvalid` muestra una **toast roja** con DaisyUI (`alert alert-error` + `toast toast-top toast-center`, `role="alert"`, `aria-live="assertive"`).
-6. El `<form>` lleva `noValidate` (delegamos al schema) y `aria-labelledby` apuntando al `id` del título (`<h1>`).
+5. En `onSubmitInvalid` muestra una **toast roja** vía `useToast()` (`variant: "error"`).
+6. El `<form>` lleva `noValidate` (delegamos al schema).
+
+### Migración incremental (híbrido temporal)
+
+Es aceptable migrar un formulario campo a campo: los campos ya migrados usan
+`form.Field`/wrappers y validación Zod; los pendientes pueden seguir siendo
+nativos y leerse vía `FormData` (con un `ref` al `<form>`) dentro de `onSubmit`.
+Es **deuda temporal** — completa la migración en cuanto puedas y evita dejar el
+híbrido indefinidamente.
 
 ## Reglas de UX y accesibilidad (no negociables)
 
 - Los errores **no se muestran** hasta que el campo haya sido `isBlurred || isTouched` o se haya intentado enviar el formulario.
+- Una vez visible, el error **desaparece en vivo** al corregir (gracias al validador `onChange`).
 - El error aparece **debajo** del campo, dentro de un `<p role="alert">` con id propio, enlazado vía `aria-describedby` desde el input.
 - El input tiene `aria-invalid` cuando está en error.
-- El borde del input pasa a `border-error` cuando hay error visible.
+- El borde del input pasa a `border-destructive` cuando hay error visible.
 - Todos los inputs tienen `<label htmlFor>` real, `autoComplete` apropiado y `id` único (`useId`).
-- Si la validación de submit falla → toast roja + el formulario NO se envía (TanStack Form lo bloquea automáticamente al estar configurado el `onSubmit` validator).
+- Si la validación de submit falla → toast roja + el formulario NO se envía (TanStack Form lo bloquea automáticamente al estar el schema en `validators`).
 
-## Cómo crear un nuevo wrapper en `common/components/forms`
+## Cómo crear un nuevo wrapper en `src/components/form`
 
 Sigue exactamente el patrón de `text-field.component.tsx`. Crece de forma orgánica: **sólo** crea un wrapper cuando lo vayas a necesitar en un formulario real, no por adelantado.
 
@@ -72,7 +88,7 @@ Sigue exactamente el patrón de `text-field.component.tsx`. Crece de forma orgá
 - **Nombre de archivo**: `<tipo>-field.component.tsx`
   (`select-field.component.tsx`, `checkbox-field.component.tsx`, `textarea-field.component.tsx`, ...).
 - Exporta el componente y dos tipos: `<Tipo>FieldProps` y `<Tipo>FieldClassNames`.
-- Añade el export al barrel `apps/web/src/common/components/forms/index.ts`.
+- Añade el export al barrel `src/components/form/index.ts`.
 
 ### Props mínimas
 
@@ -87,7 +103,7 @@ export interface XxxFieldClassNames {
 
 export interface XxxFieldProps
   extends Omit<
-    XxxHTMLAttributes<HTMLXxxElement>,
+    React.XxxHTMLAttributes<HTMLXxxElement>,
     | 'value'
     | 'onChange'
     | 'onBlur'
@@ -113,7 +129,7 @@ export interface XxxFieldProps
 
 - `useId()` para el id (con fallback si el consumidor no pasa `id`).
 - `errorId = `${inputId}-error``.
-- `DEFAULT_CLASS_NAMES` en el módulo + `styles = { ...DEFAULT_CLASS_NAMES, ...classNames }`.
+- `DEFAULT_CLASS_NAMES` en el módulo + `styles = { ...DEFAULT_CLASS_NAMES, ...classNames }`, estilado con las CSS vars del repo (no DaisyUI).
 - Renderizar:
   ```tsx
   <form.Field name={name}>
@@ -139,19 +155,21 @@ export interface XxxFieldProps
 ## Antipatrones a evitar
 
 - Usar `react-hook-form`, `formik` u otra librería distinta de TanStack Form.
+- Usar DaisyUI o introducir una librería de toast/forms nueva (el repo usa shadcn sobre `radix-ui`).
 - Validar a mano en `onChange` en vez de declarar el schema Zod.
 - Mostrar errores antes del primer blur o intento de submit.
+- Configurar solo `onBlur`/`onSubmit` cuando el requisito es que el error desaparezca al corregir (faltaría `onChange`).
 - Crear inputs controlados directamente dentro del pod cuando ya existe (o puede existir) un wrapper.
 - Duplicar la lógica de error / `aria-*` en cada `form.Field`.
 - Olvidar `noValidate` en el `<form>` o el `event.preventDefault()` en `onSubmit`.
-- Crear wrappers especulativos en `common/components/forms` que ningún formulario use todavía.
+- Crear wrappers especulativos en `src/components/form` que ningún formulario use todavía.
 
 ## Checklist final antes de dar por terminado un formulario
 
 - [ ] Schema Zod en `<form>.schema.ts` con `type FormValues = z.infer<...>`.
-- [ ] `validators.onBlur` y `validators.onSubmit` configurados con el schema.
-- [ ] Todos los campos usan wrappers de `common/components/forms` (existentes o creados siguiendo el patrón).
-- [ ] Errores aparecen sólo tras `blur` / submit, con `role="alert"` y `aria-describedby`.
-- [ ] `onSubmitInvalid` muestra toast roja.
-- [ ] `<form noValidate>` con `aria-labelledby` apuntando al título.
-- [ ] `cd apps/web && node --run check-types` pasa sin errores.
+- [ ] `validators.onChange` y `validators.onBlur` configurados con el schema.
+- [ ] Todos los campos (ya migrados) usan wrappers de `src/components/form` (existentes o creados siguiendo el patrón).
+- [ ] Errores aparecen sólo tras `blur` / submit, con `role="alert"` y `aria-describedby`, y **desaparecen al corregir**.
+- [ ] `onSubmitInvalid` muestra toast roja vía `useToast()`.
+- [ ] `<form noValidate>` con `event.preventDefault()` en el submit.
+- [ ] `npx tsc --noEmit` pasa sin errores.
