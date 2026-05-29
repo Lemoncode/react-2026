@@ -1,25 +1,35 @@
-# Calendario - UI
+# Página de reservas
 
-Ya tengo una server function que me carga la diponibilidad de un mes dado, ahora quiero conectar el UI con esa función para mostrar la disponibilidad en el calendario, y después permitir que el usuario pueda elegir rangos de fechas, quiero reservar desde este día a este otro día.
-
-Así que vamos por pasos, primer prompt
-
-```
-/grill-me ahora quiero en la sección de disponibilidad añadir un calendario que muestre la disponibilidad del mes, y que permita seleccionar rangos de fechas para reservar, para los rangos de fecha creo que lo mejor es usar la server function que hemos creado, planteate si ampliarla a que traiga varios meses o no, y ten en cuenta que un usuario podría plantear que, por ejemplo, un usuario quiera reservar del 30 de marzo al 2 de abril,en un primer paso nos podemos centrar en mostrar la información, y ya despues ir a por la selección ,pero quiero que lo tengas en cuenta ya que tienes que mirar si ShadCN ofrece un componente como este y que de esta funcionalidad
-```
-
-Antes de ponernos con la selección hay un detalle que sería bueno arreglar: Debajo de disponibilidad siempre pone "Mayo de 2026" lo suyo es que ponga el mes que se está mostrando.
-
-Este es muy facil
+Vamos a por la página de reservas vamos a dar un primer paso, armar la página con los parametros adecuados, y mostrar por consola la seleccion.
 
 ```md
-Debajo de disponibilidad siempre pone "Mayo de 2026" lo suyo es que ponga el mes que se está mostrando.
+/grill-me Ahora desde la página principal si selecciono las fechas y le doy a consultar disponibilidad, quiero que navegue a otro página con el mismo estilo y responsiva, que muestra la seleccion de fecha realizada (con opción de cambiarla), y pida los datos del huesped (nombre, apellido, email, teléfono, numero de huespedes, y un campo de text libre para comentarios adicionales) y un botón para enviar correo al dueño de la propiedad para confirmar la reserva.
+
+De momento nos quedamos en lo que es la maquetación de la página y cuando se pinche en reservar se muestre por consola lo que se ha elegido
+
+A tener en cuenta los datos de las fechas de reserva los podemos pasar por query string en la url
 ```
 
-## Seleccion
+Empezamos con la validación del formulario:
 
-Ahora vamos a por la selección, quiero que el usario pueda realizar la selección y que al pulsar en el botón de consultar diposnibilidad, de momento me muestre un console.log con la seleccion de fechas
+```
+Como siguiente paso quiero validar el formulario, vamos a empezar facil, de primeras vamos a validar que el nombre este bien informado, vamos a usar TanStack Form y Zod para esto, y vamos a mostrar un mensaje de error debajo del campo de nombre si el nombre no es correcto, el mensaje de error debe desaparecer cuando el usuario corrija el error.
 
-```md
-/grill-me Ahora vamos a por la selección, quiero que el usario pueda realizar la selección y que al pulsar en el botón de consultar disponibilidad, de momento me muestre un console.log con la seleccion de fechas
+Tan Stack Form obliga a crear unos wrappers alrededor de los componentes, no quiero ir repetiendolos, para ello vamos a crear dentor de src/components una carpeta que llamaremos form donde vamos a poner los wrappers por ejemplo de el input del campo nombre
+```
+
+En el siguiente paso cubrimos todos los campos y se crean todos los wrappers
+
+```
+/grill-me Vamos a completar la validación para todos los campos del formulario, para ello vamos a crear los wrappers necesarios para cada campo, y vamos a mostrar un mensaje de error debajo de cada campo si el campo no es correcto, el mensaje de error debe desaparecer cuando el usuario corrija el error.
+
+Además cuando se pulse en el botón de solicitar reserva, si el formulario no es correcto, tiene que aparece un aviso para que chequee los campos, acuerdate que estamos usando shad cn
+```
+
+Como último paso, si el formulario es correcot vamos a usar Resend para enviar un correo al dueño de la propiedad con los datos de la reserva, para ello vamos a crear una función en el backend que se encargue de enviar el correo, y vamos a llamar a esa función desde el frontend cuando se pulse en el botón de solicitar reserva, pasando los datos del formulario como parámetros.
+
+```
+Como último paso, si el formulario es correcot vamos a usar Resend para enviar un correo al dueño de la propiedad con los datos de la reserva, para ello vamos a crear una función en el backend que se encargue de enviar el correo, y vamos a llamar a esa función desde el frontend cuando se pulse en el botón de solicitar reserva, pasando los datos del formulario como parámetros.
+
+Crea las variables de entorno necesarias para Resend, y el correo por defecto para pruebas y dime donde poner el token de resend
 ```
