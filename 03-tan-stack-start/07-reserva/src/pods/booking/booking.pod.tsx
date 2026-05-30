@@ -20,6 +20,7 @@ import {
 import type { CalendarBlockVm } from "@/pods/home/availability.vm";
 import { DateSummary } from "./components/date-summary.component";
 import { GuestForm } from "./components/guest-form.component";
+import { sendBookingRequest } from "./booking.api";
 import type { GuestDetails } from "./booking.model";
 
 interface BookingProps {
@@ -80,15 +81,15 @@ export const Booking = ({ from, to, blocks }: BookingProps) => {
     setIsEditing(true);
   };
 
-  const handleSubmit = (guest: GuestDetails) => {
+  const handleSubmit = async (guest: GuestDetails) => {
     if (!range?.from || !range?.to) return;
-    console.log("Solicitud de reserva:", {
-      dates: {
+    await sendBookingRequest({
+      data: {
+        ...guest,
         from: toIsoDate(range.from),
         to: toIsoDate(range.to),
         nights,
       },
-      guest,
     });
   };
 

@@ -4,7 +4,7 @@ import { XIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-type ToastVariant = "default" | "error";
+type ToastVariant = "default" | "error" | "success";
 
 interface ToastOptions {
   title?: string;
@@ -37,6 +37,7 @@ const rootClassName =
 const variantClassName: Record<ToastVariant, string> = {
   default: "",
   error: "bg-destructive/10 ring-destructive/20",
+  success: "bg-[var(--lagoon-deep)]/10 ring-[var(--lagoon-deep)]/20",
 };
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
@@ -73,6 +74,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                   className={cn(
                     "text-base font-semibold text-[var(--sea-ink)]",
                     item.variant === "error" && "text-destructive",
+                    item.variant === "success" && "text-[var(--lagoon-deep)]",
                   )}
                 >
                   {item.title}

@@ -29,7 +29,7 @@ Además cuando se pulse en el botón de solicitar reserva, si el formulario no e
 Como último paso, si el formulario es correcot vamos a usar Resend para enviar un correo al dueño de la propiedad con los datos de la reserva, para ello vamos a crear una función en el backend que se encargue de enviar el correo, y vamos a llamar a esa función desde el frontend cuando se pulse en el botón de solicitar reserva, pasando los datos del formulario como parámetros.
 
 ```
-Como último paso, si el formulario es correcot vamos a usar Resend para enviar un correo al dueño de la propiedad con los datos de la reserva, para ello vamos a crear una función en el backend que se encargue de enviar el correo, y vamos a llamar a esa función desde el frontend cuando se pulse en el botón de solicitar reserva, pasando los datos del formulario como parámetros.
+/grill-me Como último paso, si el formulario es correcto vamos a usar Resend para enviar un correo al dueño de la propiedad con los datos de la reserva, para ello vamos a crear una función en el backend que se encargue de enviar el correo, y vamos a llamar a esa función desde el frontend cuando se pulse en el botón de solicitar reserva, pasando los datos del formulario como parámetros.
 
 Crea las variables de entorno necesarias para Resend, y el correo por defecto para pruebas y dime donde poner el token de resend
 ```

@@ -5,7 +5,7 @@ import { useToast } from "@/components/ui/toast";
 import { guestFormSchema, type GuestFormValues } from "../guest-form.schema";
 
 interface GuestFormProps {
-  onSubmit: (guest: GuestFormValues) => void;
+  onSubmit: (guest: GuestFormValues) => Promise<void>;
 }
 
 export const GuestForm = ({ onSubmit }: GuestFormProps) => {
@@ -21,8 +21,22 @@ export const GuestForm = ({ onSubmit }: GuestFormProps) => {
       comments: "",
     } as GuestFormValues,
     validators: { onChange: guestFormSchema, onBlur: guestFormSchema },
-    onSubmit: ({ value }) => {
-      onSubmit(value);
+    onSubmit: async ({ value, formApi }) => {
+      try {
+        await onSubmit(value);
+        toast({
+          variant: "success",
+          title: "Solicitud enviada",
+          description: "Hemos enviado tu solicitud al propietario.",
+        });
+        formApi.reset();
+      } catch {
+        toast({
+          variant: "error",
+          title: "No se pudo enviar",
+          description: "Ha ocurrido un error. Inténtalo de nuevo en unos minutos.",
+        });
+      }
     },
     onSubmitInvalid: () => {
       toast({
@@ -98,12 +112,17 @@ export const GuestForm = ({ onSubmit }: GuestFormProps) => {
         placeholder="¿Algo que debamos saber? Llegada tardía, niños, alergias…"
       />
 
-      <Button
-        type="submit"
-        className="mt-1 h-12 w-full rounded-2xl bg-[var(--lagoon-deep)] text-base font-semibold text-white hover:bg-[#246f76]"
-      >
-        Solicitar reserva
-      </Button>
+      <form.Subscribe selector={(state) => state.isSubmitting}>
+        {(isSubmitting) => (
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="mt-1 h-12 w-full rounded-2xl bg-[var(--lagoon-deep)] text-base font-semibold text-white hover:bg-[#246f76] disabled:opacity-60"
+          >
+            {isSubmitting ? "Enviando…" : "Solicitar reserva"}
+          </Button>
+        )}
+      </form.Subscribe>
     </form>
   );
 };
