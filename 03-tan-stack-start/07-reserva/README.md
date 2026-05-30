@@ -23,7 +23,7 @@ En el siguiente paso cubrimos todos los campos y se crean todos los wrappers
 ```
 /grill-me Vamos a completar la validación para todos los campos del formulario, para ello vamos a crear los wrappers necesarios para cada campo, y vamos a mostrar un mensaje de error debajo de cada campo si el campo no es correcto, el mensaje de error debe desaparecer cuando el usuario corrija el error.
 
-Además cuando se pulse en el botón de solicitar reserva, si el formulario no es correcto, tiene que aparece un aviso para que chequee los campos, acuerdate que estamos usando shad cn
+Además cuando se pulse en el botón de solicitar reserva, si el formulario no es correcto, tiene que aparece un aviso para que chequee los campos, acuerdate que estamos usando shadcn
 ```
 
 Como último paso, si el formulario es correcot vamos a usar Resend para enviar un correo al dueño de la propiedad con los datos de la reserva, para ello vamos a crear una función en el backend que se encargue de enviar el correo, y vamos a llamar a esa función desde el frontend cuando se pulse en el botón de solicitar reserva, pasando los datos del formulario como parámetros.

@@ -1,11 +1,7 @@
-export interface GuestDetails {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  guests: number;
-  comments: string;
-}
+import type { GuestFormValues } from "./guest-form.schema";
+
+/** Datos del huésped — fuente de verdad: el schema Zod del formulario. */
+export type GuestDetails = GuestFormValues;
 
 export interface BookingRequest {
   dates: {
