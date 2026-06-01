@@ -1,0 +1,9 @@
+services:
+  mongo:
+    image: mongo:8
+    container_name: rental-mongo
+    restart: unless-stopped
+    ports:
+      - "27018:27017"
+    volumes:
+      - ./data/mongo:/data/db
