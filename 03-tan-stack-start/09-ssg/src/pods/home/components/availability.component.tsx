@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import type { DateRange } from "react-day-picker";
 import { Button } from "@/components/ui/button";
@@ -9,16 +9,31 @@ import {
   toIsoDate,
 } from "@/components/date-range-picker";
 import type { AvailabilitySection } from "../home.model";
+import { getAvailabilityByMonth } from "@/pods/home/availability.api";
 import type { CalendarBlockVm } from "../availability.vm";
 
 interface AvailabilityProps {
   availability: AvailabilitySection;
-  blocks: CalendarBlockVm[];
 }
 
-export const Availability = ({ availability, blocks }: AvailabilityProps) => {
+export const Availability = ({ availability }: AvailabilityProps) => {
   const navigate = useNavigate();
   const [range, setRange] = useState<DateRange | undefined>(undefined);
+  const [blocks, setBlocks] = useState<CalendarBlockVm[]>([]);
+
+  useEffect(() => {
+    const now = new Date();
+
+    getAvailabilityByMonth({
+      data: {
+        month: now.getMonth() + 1,
+        year: now.getFullYear(),
+        monthsAhead: 1,
+      },
+    }).then((data) => {
+      setBlocks(data);
+    });
+  }, []);
 
   const { isValid } = getRangeValidity(range);
 

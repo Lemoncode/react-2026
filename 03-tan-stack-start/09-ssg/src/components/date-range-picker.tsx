@@ -67,7 +67,8 @@ export const getRangeValidity = (
 
 export const formatRangeLabel = (from: Date, to: Date): string => {
   const sameMonth =
-    from.getMonth() === to.getMonth() && from.getFullYear() === to.getFullYear();
+    from.getMonth() === to.getMonth() &&
+    from.getFullYear() === to.getFullYear();
   const fromDay = from.getDate();
   const toDay = to.getDate();
   const fromMonth = from.toLocaleDateString("es-ES", { month: "long" });
@@ -120,11 +121,13 @@ export const DateRangePicker = ({
 }: DateRangePickerProps) => {
   const today = useMemo(startOfToday, []);
   const isDesktop = useMediaQuery("(min-width: 768px)");
-  const [visibleMonth, setVisibleMonth] = useState<Date>(
-    value?.from ?? today,
-  );
+  const [visibleMonth, setVisibleMonth] = useState<Date>(value?.from ?? today);
   const [currentBlocks, setCurrentBlocks] = useState<CalendarBlockVm[]>(blocks);
   const isInitialRender = useRef(true);
+
+  useEffect(() => {
+    setCurrentBlocks(blocks);
+  }, [blocks]);
 
   const bookedRanges = useMemo(
     () =>
