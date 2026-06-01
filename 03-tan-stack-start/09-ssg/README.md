@@ -51,3 +51,46 @@ const config = defineConfig({
   ],
 })
 ```
+
+Si hacemos un build podemos ver que tenemos en `.output/public/index.html` el HTML generado.
+
+Pero tenemo un problema y es que la disopniblidad si la quiero en tiempo real ¿Qué podemos hacer? Pues mover esa parte a un componente client only.
+
+Para ello quitamos del hompe page la parte de disponibilidad y la movemos a un componente client only.
+
+_./src/routes/index.tsx_
+
+```diff
+import { createFileRoute } from "@tanstack/react-router";
+import { getHomePageContent } from "@/pods/home/home.api";
+import { getAvailabilityByMonth } from "@/pods/home/availability.api";
+import { Home } from "@/pods/home";
+
+export const Route = createFileRoute("/")({
+  loader: async () => {
+-    const now = new Date();
+-    const [content, availability] = await Promise.all([
+-      getHomePageContent(),
+-      getAvailabilityByMonth({
+-        data: {
+-          month: now.getMonth() + 1,
+-          year: now.getFullYear(),
+-          monthsAhead: 1,
+-        },
+-      }),
+-    ]);
+-    return { content, availability };
++   const content = await getHomePageContent();
++    return { content };
+  },
+  component: App,
+});
+
+function App() {
+-  const { content, availability } = Route.useLoaderData();
++  const { content } = Route.useLoaderData();
+-  return <Home content={content} availability={availability} />;
++  return <Home content={content} />;
+}
+```
+
