@@ -99,6 +99,8 @@ console.log("Cliente plantilla:", clientePlantilla);
 const creaClienteVIP = (nombre: string, apellidos: string): Cliente => {
   const nuevoCliente: Cliente = {
     ...clientePlantilla,
+    nombre,
+    apellidos,
 +      descuento: {
 +        ...clientePlantilla.descuento,
 +      },
@@ -116,6 +118,8 @@ Y si queremos ser más elegantes:
 const creaClienteVIP = (nombre: string, apellidos: string): Cliente => {
   const nuevoCliente: Cliente = {
     ...clientePlantilla,
+    nombre,
+    apellidos,
       descuento: {
         ...clientePlantilla.descuento,
 +      valor: clientePlantilla.descuento.valor * 2,
