@@ -11,8 +11,6 @@ interface HomeProps {
 }
 
 export const Home: React.FC<HomeProps> = ({ content, availability }) => {
-  const availabilityContent = use(availability);
-
   return (
     <main className="pb-8">
       <Hero hero={content.heroSection} />
@@ -21,7 +19,7 @@ export const Home: React.FC<HomeProps> = ({ content, availability }) => {
         <Suspense fallback={<div>Loading availability...</div>}>
           <Availability
             availability={content.availabilitySection}
-            blocks={availabilityContent}
+            blocks={availability}
           />
         </Suspense>
       </section>

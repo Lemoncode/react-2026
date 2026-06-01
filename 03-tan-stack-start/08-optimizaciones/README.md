@@ -88,31 +88,77 @@ interface HomeProps {
 export const Home: React.FC<HomeProps> = ({ content, availability }) => {
 ```
 
-```diff
-import type { FullMainPageVm } from "./home.vm";
-import type { CalendarBlockVm } from "./availability.vm";
-import { Hero } from "./components/hero.component";
-import { Features } from "./components/features.component";
-import { Availability } from "./components/availability.component";
-+ import { Suspense, use } from "react";
+Navego desde homePod hasta availability
 
-export const Home: React.FC<HomeProps> = ({ content, availability }) => {
-+ const availabilityContent = use(availability);
+```diff
+
+- import { useState } from "react";
++ import { Suspense, use, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
+import type { DateRange } from "react-day-picker";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  DateRangePicker,
+  getRangeValidity,
+  toIsoDate,
+} from "@/components/date-range-picker";
+import type { AvailabilitySection } from "../home.model";
+import type { CalendarBlockVm } from "../availability.vm";
+
+interface AvailabilityProps {
+  availability: AvailabilitySection;
+-   blocks: CalendarBlockVm[];
++  blocks: Promise<CalendarBlockVm[]>;
+}
+
+export const Availability = ({ availability, blocks }: AvailabilityProps) => {
+  const navigate = useNavigate();
+  const [range, setRange] = useState<DateRange | undefined>(undefined);
++  const blocksContent = use(blocks);
+  const { isValid } = getRangeValidity(range);
+
+  const handleConsult = () => {
+    if (!isValid || !range?.from || !range?.to) return;
+    navigate({
+      to: "/reserva",
+      search: { from: toIsoDate(range.from), to: toIsoDate(range.to) },
+    });
+  };
+
+
 
   return (
-    <main className="pb-8">
-      <Hero hero={content.heroSection} />
-      <section className="page-wrap grid gap-8 py-10 md:grid-cols-[0.9fr_1.1fr] md:py-14">
-        <Features features={content.featureSection} />
-+      <Suspense fallback={<div>Loading availability...</div>}>
-        <Availability
-          availability={content.availabilitySection}
--          blocks={availability}
-+         blocks={availabilityContent}
-        />
-+      </Suspense>
-      </section>
-    </main>
+    <Card className="island-shell gap-0 rounded-[2rem] border-0 p-0 ring-0">
+      <CardContent className="p-7">
++        <Suspense fallback={<div>Loading availability...</div>}>
+          <DateRangePicker
+-           blocks={blocks}
++            blocks={blocksContent}
+            value={range}
+            onChange={setRange}
+            labels={{
+              topTitle: availability.topTitle,
+              freeLabel: availability.freeLabel,
+              busyLabel: availability.BusyLabel,
+              selectionLabel: availability.selectionLabel,
+              rangeSelectedTopTitle: availability.rangeSelectedTopTitle,
+              rangeSelectedMainTitle: availability.rangeSelectedMainTitle,
+            }}
+          >
+            <Button
+              type="button"
+              disabled={!isValid}
+              onClick={handleConsult}
+              aria-label={availability.CheckAvailabilityLabel}
+              className="mt-4 h-12 w-full rounded-2xl bg-[var(--lagoon-deep)] text-base font-semibold text-white hover:bg-[#246f76] disabled:opacity-60"
+            >
+              {availability.CheckAvailabilityLabel}
+            </Button>
+          </DateRangePicker>
++        </Suspense>
+      </CardContent>
+    </Card>
   );
 };
 ```

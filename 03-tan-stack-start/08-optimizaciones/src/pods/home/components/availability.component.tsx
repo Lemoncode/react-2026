@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Suspense, use, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import type { DateRange } from "react-day-picker";
 import { Button } from "@/components/ui/button";
@@ -13,13 +13,13 @@ import type { CalendarBlockVm } from "../availability.vm";
 
 interface AvailabilityProps {
   availability: AvailabilitySection;
-  blocks: CalendarBlockVm[];
+  blocks: Promise<CalendarBlockVm[]>;
 }
 
 export const Availability = ({ availability, blocks }: AvailabilityProps) => {
   const navigate = useNavigate();
   const [range, setRange] = useState<DateRange | undefined>(undefined);
-
+  const blocksContent = use(blocks);
   const { isValid } = getRangeValidity(range);
 
   const handleConsult = () => {
@@ -33,29 +33,31 @@ export const Availability = ({ availability, blocks }: AvailabilityProps) => {
   return (
     <Card className="island-shell gap-0 rounded-[2rem] border-0 p-0 ring-0">
       <CardContent className="p-7">
-        <DateRangePicker
-          blocks={blocks}
-          value={range}
-          onChange={setRange}
-          labels={{
-            topTitle: availability.topTitle,
-            freeLabel: availability.freeLabel,
-            busyLabel: availability.BusyLabel,
-            selectionLabel: availability.selectionLabel,
-            rangeSelectedTopTitle: availability.rangeSelectedTopTitle,
-            rangeSelectedMainTitle: availability.rangeSelectedMainTitle,
-          }}
-        >
-          <Button
-            type="button"
-            disabled={!isValid}
-            onClick={handleConsult}
-            aria-label={availability.CheckAvailabilityLabel}
-            className="mt-4 h-12 w-full rounded-2xl bg-[var(--lagoon-deep)] text-base font-semibold text-white hover:bg-[#246f76] disabled:opacity-60"
+        <Suspense fallback={<div>Loading availability...</div>}>
+          <DateRangePicker
+            blocks={blocksContent}
+            value={range}
+            onChange={setRange}
+            labels={{
+              topTitle: availability.topTitle,
+              freeLabel: availability.freeLabel,
+              busyLabel: availability.BusyLabel,
+              selectionLabel: availability.selectionLabel,
+              rangeSelectedTopTitle: availability.rangeSelectedTopTitle,
+              rangeSelectedMainTitle: availability.rangeSelectedMainTitle,
+            }}
           >
-            {availability.CheckAvailabilityLabel}
-          </Button>
-        </DateRangePicker>
+            <Button
+              type="button"
+              disabled={!isValid}
+              onClick={handleConsult}
+              aria-label={availability.CheckAvailabilityLabel}
+              className="mt-4 h-12 w-full rounded-2xl bg-[var(--lagoon-deep)] text-base font-semibold text-white hover:bg-[#246f76] disabled:opacity-60"
+            >
+              {availability.CheckAvailabilityLabel}
+            </Button>
+          </DateRangePicker>
+        </Suspense>
       </CardContent>
     </Card>
   );
