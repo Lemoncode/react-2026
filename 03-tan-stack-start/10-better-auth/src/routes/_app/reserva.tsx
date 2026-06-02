@@ -31,7 +31,7 @@ const isValidDateRange = (from?: string, to?: string): boolean => {
   return nights >= MIN_NIGHTS;
 };
 
-export const Route = createFileRoute("/reserva")({
+export const Route = createFileRoute("/_app/reserva")({
   validateSearch: (search) => searchSchema.parse(search),
   beforeLoad: ({ search }) => {
     // Malformed/manipulated URL (bad format, order, past dates, < min nights):

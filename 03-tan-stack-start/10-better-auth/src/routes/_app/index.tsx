@@ -3,7 +3,7 @@ import { getHomePageContent } from "@/pods/home/home.api";
 import { getAvailabilityByMonth } from "@/pods/home/availability.api";
 import { Home } from "@/pods/home";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_app/")({
   loader: async () => {
     const now = new Date();
     const [content, availability] = await Promise.all([

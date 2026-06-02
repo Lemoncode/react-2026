@@ -4,6 +4,12 @@ export type {
   TextFieldClassNames,
 } from "./text-field.component";
 
+export { PasswordField } from "./password-field.component";
+export type {
+  PasswordFieldProps,
+  PasswordFieldClassNames,
+} from "./password-field.component";
+
 export { NumberField } from "./number-field.component";
 export type {
   NumberFieldProps,
