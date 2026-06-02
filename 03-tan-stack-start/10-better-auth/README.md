@@ -109,5 +109,22 @@ export const Route = createFileRoute("/api/auth/$")({
 
 Antes de seguir y conectar el formulario de login con better auth, vamos a crear un usuario en la base de datos para poder logarnos, para ello vamos a crear un script que se conecte a la base de datos y cree un usuario usando el adaptador de MongoDB de better auth, si te acuerdas debajo de la carpeta script ya teníamos un script para crear datos de prueba, vamos a crear otro para crear un usuario, esto se lo vamos a pedir a Claude
 
-```
+```md
+/grill-me Quiero crear un script (debajo de carpeta scripts), un script nuevo para crear un usuario de prueba, de momento va a ser harcodeado (ojo las .env tienen las conexiones, secreto etc del raiz, y además en el proyecto web tenemos las librerías instaladas, mira para el script que haría falta hacer), más adelante podríamos preguntar usuario y clave, el usuario va a ser "admin@email.com" y la clave "test1234",crea la entrada en package.json para poder crearlo, tengo un ejemplo de código que creo podría valer: // scripts/create-user.ts
+import { auth } from "../src/lib/auth";
+
+async function main() {
+  const result = await auth.api.signUpEmail({
+    body: {
+      name: "Admin",
+      email: "admin@example.com",
+      password: "SuperPassword123!",
+    },
+  });
+
+  console.log(result);
+}
+
+
+main().catch(console.error); 
 ```
