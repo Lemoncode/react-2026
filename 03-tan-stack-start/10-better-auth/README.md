@@ -61,18 +61,53 @@ Para ello instalamos el adaptador de MongoDB
 
 https://better-auth.com/docs/adapters/mongo
 
-
 ```bash
+pnpm add @better-auth/mongo-adapter
 ```
-
 
 _./src/lib/auth.ts_
 
 ```diff
 import { betterAuth } from "better-auth";
++ import {getDb} from './mongodb';
++ import { mongodbAdapter } from "better-auth/adapters/mongodb";
++ import { tanstackStartCookies } from "better-auth/tanstack-start";
+
++ const db = await getDb();
 
 export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,
   url: process.env.BETTER_AUTH_URL,
++  database: mongodbAdapter(db),
++  emailAndPassword: {
++    enabled: true,
++  },
++  plugins: [
++    tanstackStartCookies(), 
++  ],
 });
+```
+
+Vamos ahora a generar unos endpoint debajo de API/Auth para que better auth tenga un punto de entrada como endpoint
+
+_./src/routes/api/auth.ts_
+
+```ts
+// src/routes/api/auth/$.ts
+import { auth } from "@/lib/auth";
+import { createFileRoute } from "@tanstack/react-router";
+
+export const Route = createFileRoute("/api/auth/$")({
+  server: {
+    handlers: {
+      GET: async ({ request }) => auth.handler(request),
+      POST: async ({ request }) => auth.handler(request),
+    },
+  },
+});
+```
+
+Antes de seguir y conectar el formulario de login con better auth, vamos a crear un usuario en la base de datos para poder logarnos, para ello vamos a crear un script que se conecte a la base de datos y cree un usuario usando el adaptador de MongoDB de better auth, si te acuerdas debajo de la carpeta script ya teníamos un script para crear datos de prueba, vamos a crear otro para crear un usuario, esto se lo vamos a pedir a Claude
+
+```
 ```

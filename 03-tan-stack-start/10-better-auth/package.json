@@ -16,6 +16,7 @@
     "db:seed": "node --env-file=.env --import tsx scripts/seed.ts"
   },
   "dependencies": {
+    "@better-auth/mongo-adapter": "^1.6.13",
     "@content-island/api-client": "^0.20.0",
     "@fontsource-variable/geist": "^5.2.9",
     "@tailwindcss/vite": "^4.1.18",
