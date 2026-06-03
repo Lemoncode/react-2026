@@ -1,11 +1,28 @@
 import { LoginForm } from "./components/login-form.component";
 import type { LoginFormValues } from "./login-form.schema";
+import { authClient } from "@/lib/auth-client";
+import { useNavigate } from "@tanstack/react-router";
 
 export const Login = () => {
+  const navigate = useNavigate();
   const handleSubmit = async (_values: LoginFormValues) => {
-    // TODO(better-auth): conectar aquí el signIn con email/contraseña.
-    // De momento no hace nada: solo mostramos el formulario.
-    console.log("[login] submit placeholder — pendiente de cablear better-auth");
+    try {
+      const result = await authClient.signIn.email({
+        email: _values.email,
+        password: _values.password,
+      });
+
+      if (result.error) {
+        console.error("Login error:", result.error);
+      } else {
+        console.log("Login successful:", result);
+        navigate({
+          to: "/intranet",
+        });
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
   };
 
   return (

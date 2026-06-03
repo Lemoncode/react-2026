@@ -83,7 +83,7 @@ export const auth = betterAuth({
 +    enabled: true,
 +  },
 +  plugins: [
-+    tanstackStartCookies(), 
++    tanstackStartCookies(),
 +  ],
 });
 ```
@@ -114,17 +114,101 @@ Antes de seguir y conectar el formulario de login con better auth, vamos a crear
 import { auth } from "../src/lib/auth";
 
 async function main() {
-  const result = await auth.api.signUpEmail({
-    body: {
-      name: "Admin",
-      email: "admin@example.com",
-      password: "SuperPassword123!",
-    },
-  });
+const result = await auth.api.signUpEmail({
+body: {
+name: "Admin",
+email: "admin@example.com",
+password: "SuperPassword123!",
+},
+});
 
-  console.log(result);
+console.log(result);
 }
 
+main().catch(console.error);
+```
 
-main().catch(console.error); 
+Ahora toca conectar el back que hemos creado con el formulario que hemos creado, vamos a por otro grill-me
+
+Para gestionar la seguridad en cliente, nos creamos debajo de lib, un fichero que llamaremos `auth-client.ts`
+
+_./src/lib/auth-client.ts_
+
+```ts
+import { createAuthClient } from "better-auth/react";
+export const authClient = createAuthClient({
+  /** The base URL of the server (optional if you're using the same domain) */
+  // Esto tendría que ir a una variable de entorno de cliente
+  // y igual la podemos quitar porque tenemos auth y front en mismo server
+  baseURL: "http://localhost:3000",
+});
+```
+
+Vamonos al pod de login y validar lo que ha introducido el usuario y llamar al método de login de better auth.
+
+_src/pods/login/login.pod.tsx_
+
+```diff
+import { LoginForm } from "./components/login-form.component";
+import type { LoginFormValues } from "./login-form.schema";
++ import { authClient } from "@/lib/auth-client";
+
+export const Login = () => {
+  const handleSubmit = async (_values: LoginFormValues) => {
+-    // TODO(better-auth): conectar aquí el signIn con email/contraseña.
+-    // De momento no hace nada: solo mostramos el formulario.
+-    console.log("[login] submit placeholder — pendiente de cablear better-auth");
++    try {
++      const result = await authClient.signIn.email({
++          email: _values.email,
++          password: _values.password,
++      });
++      if(result.error) {
++        console.error("Login error:", result.error);
++      } else {
++        console.log("Login successful:", result);
++      }
++    } catch (error) {
++      console.error("Login failed:", error);
++    }
+  };
+```
+
+Vamos a probarlo
+
+```bash
+pnpm run dev
+```
+
+Tirando de consola parece que funciona, así que vamos a crear una páigna home de la intranet para que navegue a ella.
+
+_./src/routes/(auth)/intranet/index.tsx_
+
+Al crear el fichero si tenemos arracnado el run dev se creará automáticamente el código para la ruta.
+
+Ahora volvemos al login, y si el login es correcto, navegamos a la intranet, vamos navegar por código para ello usaremos el hook _useNavigate_ de tan stack router.
+
+_src/pods/login/login.pod.tsx_
+
+```diff
+import { LoginForm } from "./components/login-form.component";
+import type { LoginFormValues } from "./login-form.schema";
+import { authClient } from "@/lib/auth-client";
++ import { useNavigate } from "@tanstack/react-router";
+
+export const Login = () => {
++  const navigate = useNavigate();
+  const handleSubmit = async (_values: LoginFormValues) => {
+    try {
+      const result = await authClient.signIn.email({
+        email: _values.email,
+        password: _values.password,
+      });
+
+      if(result.error) {
+        console.error("Login error:", result.error);
+      } else {
+        console.log("Login successful:", result);
++        navigate({ to: "/intranet" });
+      }
 ```
