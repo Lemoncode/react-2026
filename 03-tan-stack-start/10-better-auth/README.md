@@ -309,6 +309,12 @@ function RouteComponent() {
 }
 ```
 
+Ahora vamos a definir una cabecera para la intranet, podemos poner algo simple: el nombre de aplicación y el nombre del usuario y un botón para hacer logout, y ahí llamar a la api de better auth para hacer el logout y redigir a la ventana de login, vamos a tirar de Claude para esto:
+
+```md
+/grill-me ahora quiero en el layout de intranet (src/routes/(auth)/intranet/route.tsx), mostrar una cabecera con el nombre de la aplicación a la izquierda, y a la derecha el nombre del usuario logueado y un botón de logout, al hacer click en el botón de logout se tiene que llamar a la api de better auth para hacer el logout y redirigir a la ventana de login, sigue el mismo estilo que el resto de la aplicación y hazlo responsivo, asegurate de consultar las versiones online de documentación tanto de tan stack start como better auth
+```
+
 ---
 
 Despues layout, useSession y montar layout cabecera
