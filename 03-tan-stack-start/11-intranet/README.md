@@ -1,320 +1,158 @@
-# Area privada
+# Intranet
 
-Vamos a crear un area privada para permitir al dueño de la propiedad poder ver el calendario de reservas así como modificar entradas, o cancelarlas.
+Vamos ahora a por la intranet, aquí vamos a tirar de Claude a tope, y vamos a ir avanzado por pasos pero contandole todo lo que queremos hacer.
 
-## Pasos
+Lo ideal sería partir de un Figma o un Pencil tirando de controles de ShadCN, pero vamos a ir más rápido y confiar con Claude.
 
-Para ellos necesitamos
+Antes de escribir el prompt, vamos plantear que queremos hacer:
 
-- Tener un area en la que sea necesario que el usuario se loguee para acceder a ella.
-- Tener un dialogo de login.
-- Tener un area de calendario para mostrar las reservas.
-- Tener un area de formulario para modificar o cancelar reservas.
+Queremos tener un panel de intranet el que el usuario vea un calendario con las reservas si hace hover sobre una reserva seria interesante mostrar un tooltip con la información de la reserva, y al hacer click en la reserva, que si está en escritorio aparezca el detalle de la reserva a la derecha, y si está en móvil, que aparezca abajo, y lo idea sería que se pudiera editar, y también se pudiera cambiar el estado de la reserva, y que se pudiera eliminar la reserva, ojo a tener en cuenta, no solo hay reservas, hay un tipo de reserva que es que no está disponible el espacio, y eso se tiene que tener en cuenta a la hora de gestionar que campos son obligatorios de informar.
 
-## Area privada
+Además le daremos como info un ejemplo de documento de mongoDb para que lo tenga en cuenta.
 
-Empezamos por crear un archivo `login.tsx` en el raiz de las rutas.
+Y también vamos a hacerlo por pasos, aunque le digamos todo lo que queremos hacer, el primer paso es mostrar el calendario con las reservas, y asegurarnos que es una server function protegida por auth (que no se pueda acceder a la misma desde postman).
 
-_src/routes/login.tsx_
-
-Si tenemos el servidor de dev funcionando, automáticamente se recargará y podremos ver la página vacía de login en la ruta `/login.tsx`.
-
-Ahora quiero crear un componente de login, para ello crearemos un pod, y añadiremos ese formulario, vamos a pedirselo a Claude
+Vamos con el primer prompt:
 
 ```md
-/grill-me En la ruta login.tsx quiero usar un pod que llamare login y que se encargue de mostrar un formulario de login con los siguientes campos: email y contraseña, y un botón de submit. El formulario no tiene que hacer nada por ahora, solo mostrar los campos y el botón, sigue el estilado del proyecto y acuerdate de usar tailwind, shadcn y que sea responsivo.
-```
+Ahora quiero que en la intranet el usuario autenticado vea un calendario con las reservas si hace hover sobre una reserva seria interesante mostrar un tooltip con la información de la reserva, y al hacer click en la reserva, que si está en escritorio aparezca el detalle de la reserva a la derecha, y si está en móvil, que aparezca abajo, y lo idea sería que se pudiera editar, y también se pudiera cambiar el estado de la reserva, y que se pudiera eliminar la reserva, ojo a tener en cuenta, no solo hay reservas, hay un tipo de reserva que es que no está disponible el espacio, y eso se tiene que tener en cuenta a la hora de gestionar que campos son obligatorios de informar.
 
-Ya tenemos el formulario vamos ahora a usar una librería de autenticación, para ello vamos a usar `better-auth`, así nos ahorramos reinventar la rueda.
+En Base de datos te paso varios ejemplos de documentos de reserva.
 
-Vamos a instalar la librería:
-
-```bash
-pnpm add better-auth
-```
-
-Vamos ahora a definir variables para poner el secreto que servira como semilla para generar los tokens, y el tiempo de expiración de los mismos.
-
-```bash
-# Al menos 32 caracteres de longitud, la web de better auth
-# https://better-auth.com/docs/installation
-BETTER_AUTH_SECRET=OgyUtvUkBr9XINohCcdxTb20anyhCMgB
-BETTER_AUTH_URL=http://localhost:3000 # URL Base de tu aplicación
-```
-
-Vamos ahora a crear el punto de entrada de la librería en nuestra aplicación, tiene que estar o bien en el raíz del proyecto, o bien en la carpeta `lib` o `utils`.
-
-./src/lib/auth.ts
-
-```ts
-import { betterAuth } from "better-auth";
-
-export const auth = betterAuth({
-  secret: process.env.BETTER_AUTH_SECRET,
-  url: process.env.BETTER_AUTH_URL,
-});
-```
-
-Vamos ahora a por la base de datos, en nuestro caso queremos usar MongoDB
-
-Para ello instalamos el adaptador de MongoDB
-
-https://better-auth.com/docs/adapters/mongo
-
-```bash
-pnpm add @better-auth/mongo-adapter
-```
-
-_./src/lib/auth.ts_
-
-```diff
-import { betterAuth } from "better-auth";
-+ import {getDb} from './mongodb';
-+ import { mongodbAdapter } from "better-auth/adapters/mongodb";
-+ import { tanstackStartCookies } from "better-auth/tanstack-start";
-
-+ const db = await getDb();
-
-export const auth = betterAuth({
-  secret: process.env.BETTER_AUTH_SECRET,
-  url: process.env.BETTER_AUTH_URL,
-+  database: mongodbAdapter(db),
-+  emailAndPassword: {
-+    enabled: true,
-+  },
-+  plugins: [
-+    tanstackStartCookies(),
-+  ],
-});
-```
-
-Vamos ahora a generar unos endpoint debajo de API/Auth para que better auth tenga un punto de entrada como endpoint
-
-_./src/routes/api/auth.ts_
-
-```ts
-// src/routes/api/auth/$.ts
-import { auth } from "@/lib/auth";
-import { createFileRoute } from "@tanstack/react-router";
-
-export const Route = createFileRoute("/api/auth/$")({
-  server: {
-    handlers: {
-      GET: async ({ request }) => auth.handler(request),
-      POST: async ({ request }) => auth.handler(request),
-    },
+{
+  "_id": {
+    "$oid": "6a1dab079584647492e6e408"
   },
-});
-```
-
-Antes de seguir y conectar el formulario de login con better auth, vamos a crear un usuario en la base de datos para poder logarnos, para ello vamos a crear un script que se conecte a la base de datos y cree un usuario usando el adaptador de MongoDB de better auth, si te acuerdas debajo de la carpeta script ya teníamos un script para crear datos de prueba, vamos a crear otro para crear un usuario, esto se lo vamos a pedir a Claude
-
-```md
-/grill-me Quiero crear un script (debajo de carpeta scripts), un script nuevo para crear un usuario de prueba, de momento va a ser harcodeado (ojo las .env tienen las conexiones, secreto etc del raiz, y además en el proyecto web tenemos las librerías instaladas, mira para el script que haría falta hacer), más adelante podríamos preguntar usuario y clave, el usuario va a ser "admin@email.com" y la clave "test1234",crea la entrada en package.json para poder crearlo, tengo un ejemplo de código que creo podría valer: // scripts/create-user.ts
-import { auth } from "../src/lib/auth";
-
-async function main() {
-const result = await auth.api.signUpEmail({
-body: {
-name: "Admin",
-email: "admin@example.com",
-password: "SuperPassword123!",
-},
-});
-
-console.log(result);
-}
-
-main().catch(console.error);
-```
-
-Ahora toca conectar el back que hemos creado con el formulario que hemos creado, vamos a por otro grill-me
-
-Para gestionar la seguridad en cliente, nos creamos debajo de lib, un fichero que llamaremos `auth-client.ts`
-
-_./src/lib/auth-client.ts_
-
-```ts
-import { createAuthClient } from "better-auth/react";
-export const authClient = createAuthClient({
-  /** The base URL of the server (optional if you're using the same domain) */
-  // Esto tendría que ir a una variable de entorno de cliente
-  // y igual la podemos quitar porque tenemos auth y front en mismo server
-  baseURL: "http://localhost:3000",
-});
-```
-
-Vamonos al pod de login y validar lo que ha introducido el usuario y llamar al método de login de better auth.
-
-_src/pods/login/login.pod.tsx_
-
-```diff
-import { LoginForm } from "./components/login-form.component";
-import type { LoginFormValues } from "./login-form.schema";
-+ import { authClient } from "@/lib/auth-client";
-
-export const Login = () => {
-  const handleSubmit = async (_values: LoginFormValues) => {
--    // TODO(better-auth): conectar aquí el signIn con email/contraseña.
--    // De momento no hace nada: solo mostramos el formulario.
--    console.log("[login] submit placeholder — pendiente de cablear better-auth");
-+    try {
-+      const result = await authClient.signIn.email({
-+          email: _values.email,
-+          password: _values.password,
-+      });
-+      if(result.error) {
-+        console.error("Login error:", result.error);
-+      } else {
-+        console.log("Login successful:", result);
-+      }
-+    } catch (error) {
-+      console.error("Login failed:", error);
-+    }
-  };
-```
-
-Vamos a probarlo
-
-```bash
-pnpm run dev
-```
-
-Tirando de consola parece que funciona, así que vamos a crear una páigna home de la intranet para que navegue a ella.
-
-_./src/routes/(auth)/intranet/index.tsx_
-
-Al crear el fichero si tenemos arracnado el run dev se creará automáticamente el código para la ruta.
-
-Ahora volvemos al login, y si el login es correcto, navegamos a la intranet, vamos navegar por código para ello usaremos el hook _useNavigate_ de tan stack router.
-
-_src/pods/login/login.pod.tsx_
-
-```diff
-import { LoginForm } from "./components/login-form.component";
-import type { LoginFormValues } from "./login-form.schema";
-import { authClient } from "@/lib/auth-client";
-+ import { useNavigate } from "@tanstack/react-router";
-
-export const Login = () => {
-+  const navigate = useNavigate();
-  const handleSubmit = async (_values: LoginFormValues) => {
-    try {
-      const result = await authClient.signIn.email({
-        email: _values.email,
-        password: _values.password,
-      });
-
-      if(result.error) {
-        console.error("Login error:", result.error);
-      } else {
-        console.log("Login successful:", result);
-+        navigate({ to: "/intranet" });
-      }
-```
-
-Antes de seguir vamos a mostrar una tostada de éxito o error para el login, vamos a decirle a claude que lo haga por nosotros.
-
-```
-Ahora quiero mostrar una tostada de exito o error cuando se ha hecho el login en src/pods/login/login.pod.tsx sigue la misma aproximación que con otras tostadas de la aplicación
-```
-
-Todo muy bien pero tenemos un problema y es que si entramos en modo oculto podemos ir directamente a la intranet sin pasar por el login, esto no es correcto, aquí hay dos tipos de validación:
-
-- La de cliente que la hacemos por usabilidad.
-- La de servidor que la hacemos por seguridad.
-
-Empezamos por la de cliente.
-
-Vamos a crear un layout que cubra a todas las páginas de intranet y allí meteremos una comprobación
-
-_./src/routes/(auth)/intranet/route.tsx_
-
-Se genera solo
-
-Vamos a meter un outlet para que pinte la página hija.
-
-```diff
-import { createFileRoute } from "@tanstack/react-router";
-+ import { createFileRoute, Outlet } from "@tanstack/react-router";
-
-export const Route = createFileRoute("/(auth)/intranet")({
-  component: RouteComponent,
-});
-
-function RouteComponent() {
--  return <div>Hello "/(auth)/intranet"!</div>;
-+ return (
-+  <div>
-+     <h1>Intranet</h1>
-+     <Outlet />
-+  </div>
-+ )
-}
-```
-
-Vemos que se usa en la página home de intranet.
-
-Esto está muy bien, pero si abrimos un modo oculto y directamente vamos a `http://localhost:3000/intranet` vemos que podemos acceder sin problemas, esto no es correcto, tenemos que validar que el usuario está logueado, para ello tenemos que tener en cuenta lo siguiente:
-
-- La página se puede renderizar en servidro (SSR la primera vez).
-- La página se puede renderizar en cliente (CSR las siguientes veces).
-
-¿Qué podemos hacer?
-
-- Podemos crear una server function que nos devuelva el usuario logueado, si no hay usuario logueado que nos redirija a la página de login.
-- Podemos consumir esa server function desde el loader del layout de intranet, así todas las páginas hijas de intranet tendrán esa validación.
-
-Vamos primero a por la server function, dejamos dentro de la carpate _core_
-
-_./src/core/user-session.ts_
-
-```ts
-import { auth } from "@/lib/auth";
-import { redirect } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
-import { getRequestHeaders } from "@tanstack/react-start/server";
-
-export const getUserSession = createServerFn({ method: "GET" }).handler(
-  async () => {
-    const headers = getRequestHeaders();
-    const session = await auth.api.getSession({ headers });
-    if (!session || !session.user) {
-      throw redirect({ to: "/login" });
+  "propertyId": "villa_001",
+  "type": "booking",
+  "status": "confirmed",
+  "startDate": {
+    "$date": "2026-07-15T00:00:00.000Z"
+  },
+  "endDate": {
+    "$date": "2026-07-20T00:00:00.000Z"
+  },
+  "nights": 5,
+  "guest": {
+    "id": "guest_ana_perez",
+    "name": "Ana Pérez",
+    "email": "ana.perez@example.com",
+    "phone": "+34600111222"
+  },
+  "occupancy": {
+    "adults": 2,
+    "children": 1,
+    "babies": 0,
+    "pets": 1
+  },
+  "price": {
+    "nightlyRate": 150,
+    "cleaningFee": 40,
+    "touristTax": 20,
+    "discount": 30,
+    "subtotal": 750,
+    "total": 780,
+    "currency": "EUR"
+  },
+  "payment": {
+    "status": "paid",
+    "method": "stripe",
+    "transactionId": "txn_seed_001",
+    "paidAmount": 780,
+    "paidAt": {
+      "$date": "2026-05-29T00:00:00.000Z"
     }
-    return session;
   },
-);
-```
-
-Y ahora vamos a usarlo en el loader del layout de intranet
-
-```diff
-import { createFileRoute, Outlet } from "@tanstack/react-router";
-
-export const Route = createFileRoute("/(auth)/intranet")({
-+ loader: () => getUserSession(),
-  component: RouteComponent,
-});
-
-function RouteComponent() {
-+  const session = Route.useLoaderData();
-  return (
-    <div>
--      <h1>Intranet</h1>
-+      <h1>Intranet - Welcome {session.user.name}</h1>
-      <Outlet />
-    </div>
-  );
+  "createdAt": {
+    "$date": "2026-05-22T00:00:00.000Z"
+  },
+  "updatedAt": {
+    "$date": "2026-05-29T00:00:00.000Z"
+  }
 }
+
+{
+  "_id": {
+    "$oid": "6a1dab079584647492e6e40b"
+  },
+  "propertyId": "villa_001",
+  "type": "booking",
+  "status": "cancelled",
+  "startDate": {
+    "$date": "2026-09-05T00:00:00.000Z"
+  },
+  "endDate": {
+    "$date": "2026-09-09T00:00:00.000Z"
+  },
+  "nights": 4,
+  "guest": {
+    "id": "guest_maria_lopez",
+    "name": "María López",
+    "email": "maria.lopez@example.com",
+    "phone": "+34622333444"
+  },
+  "occupancy": {
+    "adults": 3,
+    "children": 0,
+    "babies": 0,
+    "pets": 0
+  },
+  "price": {
+    "nightlyRate": 160,
+    "cleaningFee": 40,
+    "touristTax": 24,
+    "discount": 0,
+    "subtotal": 640,
+    "total": 704,
+    "currency": "EUR"
+  },
+  "payment": {
+    "status": "refunded",
+    "method": "stripe",
+    "transactionId": "txn_seed_004",
+    "paidAmount": 0,
+    "paidAt": {
+      "$date": "2026-05-12T00:00:00.000Z"
+    }
+  },
+  "createdAt": {
+    "$date": "2026-05-07T00:00:00.000Z"
+  },
+  "updatedAt": {
+    "$date": "2026-05-22T00:00:00.000Z"
+  },
+  "cancelledAt": {
+    "$date": "2026-05-22T00:00:00.000Z"
+  }
+}
+
+{
+  "_id": {
+    "$oid": "6a1dab079584647492e6e426"
+  },
+  "propertyId": "villa_001",
+  "type": "block",
+  "subtype": "owner_use",
+  "status": "confirmed",
+  "startDate": {
+    "$date": "2026-11-17T00:00:00.000Z"
+  },
+  "endDate": {
+    "$date": "2026-11-19T00:00:00.000Z"
+  },
+  "nights": 2,
+  "notes": {
+    "internal": "Uso del propietario"
+  },
+  "createdAt": {
+    "$date": "2026-05-06T00:00:00.000Z"
+  },
+  "updatedAt": {
+    "$date": "2026-05-06T00:00:00.000Z"
+  }
+}
+
+Esto lo vamos a hacer por pasos, el primer paso es mostrar el calendario con las reservas, y asegurarnos que es una server function protegida por auth (que no se pueda acceder a la misma desde postman).
+
+Asegurate de ser consistente con el diseño, y de usar los componentes de ShadCN, y de que el código esté bien estructurado y sea fácil de mantener.
 ```
-
-Ahora vamos a definir una cabecera para la intranet, podemos poner algo simple: el nombre de aplicación y el nombre del usuario y un botón para hacer logout, y ahí llamar a la api de better auth para hacer el logout y redigir a la ventana de login, vamos a tirar de Claude para esto:
-
-```md
-/grill-me ahora quiero en el layout de intranet (src/routes/(auth)/intranet/route.tsx), mostrar una cabecera con el nombre de la aplicación a la izquierda, y a la derecha el nombre del usuario logueado y un botón de logout, al hacer click en el botón de logout se tiene que llamar a la api de better auth para hacer el logout y redirigir a la ventana de login, sigue el mismo estilo que el resto de la aplicación y hazlo responsivo, asegurate de consultar las versiones online de documentación tanto de tan stack start como better auth
-```
-
----
-
-Despues layout, useSession y montar layout cabecera
