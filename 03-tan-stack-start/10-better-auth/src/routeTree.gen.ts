@@ -14,6 +14,7 @@ import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as AppReservaRouteImport } from './routes/_app/reserva'
 import { Route as AppAboutRouteImport } from './routes/_app/about'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
+import { Route as authIntranetRouteRouteImport } from './routes/(auth)/intranet/route'
 import { Route as authIntranetIndexRouteImport } from './routes/(auth)/intranet/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
@@ -41,10 +42,15 @@ const authLoginRoute = authLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const authIntranetIndexRoute = authIntranetIndexRouteImport.update({
-  id: '/(auth)/intranet/',
-  path: '/intranet/',
+const authIntranetRouteRoute = authIntranetRouteRouteImport.update({
+  id: '/(auth)/intranet',
+  path: '/intranet',
   getParentRoute: () => rootRouteImport,
+} as any)
+const authIntranetIndexRoute = authIntranetIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => authIntranetRouteRoute,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
@@ -54,6 +60,7 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
+  '/intranet': typeof authIntranetRouteRouteWithChildren
   '/login': typeof authLoginRoute
   '/about': typeof AppAboutRoute
   '/reserva': typeof AppReservaRoute
@@ -71,6 +78,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
+  '/(auth)/intranet': typeof authIntranetRouteRouteWithChildren
   '/(auth)/login': typeof authLoginRoute
   '/_app/about': typeof AppAboutRoute
   '/_app/reserva': typeof AppReservaRoute
@@ -82,6 +90,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/intranet'
     | '/login'
     | '/about'
     | '/reserva'
@@ -92,6 +101,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/_app'
+    | '/(auth)/intranet'
     | '/(auth)/login'
     | '/_app/about'
     | '/_app/reserva'
@@ -102,9 +112,9 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
+  authIntranetRouteRoute: typeof authIntranetRouteRouteWithChildren
   authLoginRoute: typeof authLoginRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
-  authIntranetIndexRoute: typeof authIntranetIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -144,12 +154,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(auth)/intranet': {
+      id: '/(auth)/intranet'
+      path: '/intranet'
+      fullPath: '/intranet'
+      preLoaderRoute: typeof authIntranetRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/(auth)/intranet/': {
       id: '/(auth)/intranet/'
-      path: '/intranet'
+      path: '/'
       fullPath: '/intranet/'
       preLoaderRoute: typeof authIntranetIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof authIntranetRouteRoute
     }
     '/api/auth/$': {
       id: '/api/auth/$'
@@ -175,11 +192,22 @@ const AppRouteChildren: AppRouteChildren = {
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
+interface authIntranetRouteRouteChildren {
+  authIntranetIndexRoute: typeof authIntranetIndexRoute
+}
+
+const authIntranetRouteRouteChildren: authIntranetRouteRouteChildren = {
+  authIntranetIndexRoute: authIntranetIndexRoute,
+}
+
+const authIntranetRouteRouteWithChildren =
+  authIntranetRouteRoute._addFileChildren(authIntranetRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
+  authIntranetRouteRoute: authIntranetRouteRouteWithChildren,
   authLoginRoute: authLoginRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
-  authIntranetIndexRoute: authIntranetIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

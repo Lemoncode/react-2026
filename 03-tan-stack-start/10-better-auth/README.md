@@ -218,3 +218,97 @@ Antes de seguir vamos a mostrar una tostada de éxito o error para el login, vam
 ```
 Ahora quiero mostrar una tostada de exito o error cuando se ha hecho el login en src/pods/login/login.pod.tsx sigue la misma aproximación que con otras tostadas de la aplicación
 ```
+
+Todo muy bien pero tenemos un problema y es que si entramos en modo oculto podemos ir directamente a la intranet sin pasar por el login, esto no es correcto, aquí hay dos tipos de validación:
+
+- La de cliente que la hacemos por usabilidad.
+- La de servidor que la hacemos por seguridad.
+
+Empezamos por la de cliente.
+
+Vamos a crear un layout que cubra a todas las páginas de intranet y allí meteremos una comprobación
+
+_./src/routes/(auth)/intranet/route.tsx_
+
+Se genera solo
+
+Vamos a meter un outlet para que pinte la página hija.
+
+```diff
+import { createFileRoute } from "@tanstack/react-router";
++ import { createFileRoute, Outlet } from "@tanstack/react-router";
+
+export const Route = createFileRoute("/(auth)/intranet")({
+  component: RouteComponent,
+});
+
+function RouteComponent() {
+-  return <div>Hello "/(auth)/intranet"!</div>;
++ return (
++  <div>
++     <h1>Intranet</h1>
++     <Outlet />
++  </div>
++ )
+}
+```
+
+Vemos que se usa en la página home de intranet.
+
+Esto está muy bien, pero si abrimos un modo oculto y directamente vamos a `http://localhost:3000/intranet` vemos que podemos acceder sin problemas, esto no es correcto, tenemos que validar que el usuario está logueado, para ello tenemos que tener en cuenta lo siguiente:
+
+- La página se puede renderizar en servidro (SSR la primera vez).
+- La página se puede renderizar en cliente (CSR las siguientes veces).
+
+¿Qué podemos hacer?
+
+- Podemos crear una server function que nos devuelva el usuario logueado, si no hay usuario logueado que nos redirija a la página de login.
+- Podemos consumir esa server function desde el loader del layout de intranet, así todas las páginas hijas de intranet tendrán esa validación.
+
+Vamos primero a por la server function, dejamos dentro de la carpate _core_
+
+_./src/core/user-session.ts_
+
+```ts
+import { auth } from "@/lib/auth";
+import { redirect } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
+import { getRequestHeaders } from "@tanstack/react-start/server";
+
+export const getUserSession = createServerFn({ method: "GET" }).handler(
+  async () => {
+    const headers = getRequestHeaders();
+    const session = await auth.api.getSession({ headers });
+    if (!session || !session.user) {
+      throw redirect({ to: "/login" });
+    }
+    return session;
+  },
+);
+```
+
+Y ahora vamos a usarlo en el loader del layout de intranet
+
+```diff
+import { createFileRoute, Outlet } from "@tanstack/react-router";
+
+export const Route = createFileRoute("/(auth)/intranet")({
++ loader: () => getUserSession(),
+  component: RouteComponent,
+});
+
+function RouteComponent() {
++  const session = Route.useLoaderData();
+  return (
+    <div>
+-      <h1>Intranet</h1>
++      <h1>Intranet - Welcome {session.user.name}</h1>
+      <Outlet />
+    </div>
+  );
+}
+```
+
+---
+
+Despues layout, useSession y montar layout cabecera
