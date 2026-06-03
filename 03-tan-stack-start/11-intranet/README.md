@@ -157,3 +157,11 @@ Esto lo vamos a hacer por pasos, el primer paso es mostrar el calendario con las
 
 Asegurate de ser consistente con el diseño, y de usar los componentes de ShadCN, y de que el código esté bien estructurado y sea fácil de mantener.
 ```
+
+Vamos a por el siguiente paso, que se muestre el tooltip con la información de la reserva al hacer hover sobre una reserva:
+
+```
+/grill-me ahora quiero que implementes el tooltip con la información de la reserva al hacer hover sobre una reserva, el tooltip debe mostrar la información más relevante de la reserva, como el nombre del huésped, las fechas de la reserva, el estado de la reserva, y el precio total. Asegurate de que el diseño del tooltip sea consistente con el resto de la intranet y que se vea bien tanto en escritorio como en móvil.
+```
+
+Ahora quiero ir a la edición de detalle, empezamos por mostrar el detalle.
