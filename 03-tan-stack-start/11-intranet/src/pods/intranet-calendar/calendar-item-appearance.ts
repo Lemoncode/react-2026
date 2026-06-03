@@ -18,6 +18,10 @@ const SUBTYPE_LABELS: Record<string, string> = {
   maintenance: "Mantenimiento",
 };
 
+/** Human-readable reason for a block, or undefined if it has no subtype. */
+export const getBlockReason = (subtype?: string): string | undefined =>
+  subtype ? SUBTYPE_LABELS[subtype] ?? subtype : undefined;
+
 const formatUtcDate = (date: Date): string =>
   new Intl.DateTimeFormat("es-ES", {
     day: "numeric",
@@ -39,7 +43,7 @@ const rangeLabel = (item: CalendarItemVm): string =>
  */
 export const getItemAppearance = (item: CalendarItemVm): ItemAppearance => {
   if (item.type === "block") {
-    const reason = item.subtype ? SUBTYPE_LABELS[item.subtype] ?? item.subtype : undefined;
+    const reason = getBlockReason(item.subtype);
     return {
       className: "border border-slate-400/70 text-slate-700",
       style: { backgroundImage: STRIPED_BLOCK_BG },

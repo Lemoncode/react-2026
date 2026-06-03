@@ -1,3 +1,8 @@
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 import { cn } from "@/lib/utils";
 import {
   buildMonthWeeks,
@@ -5,6 +10,7 @@ import {
   WEEKDAY_LABELS,
 } from "../calendar-grid.helpers";
 import { getItemAppearance } from "../calendar-item-appearance";
+import { CalendarItemHoverCard } from "./calendar-item-hover-card.component";
 import type { CalendarItemVm } from "../intranet-calendar.vm";
 
 interface MonthCalendarGridProps {
@@ -86,25 +92,36 @@ export const MonthCalendarGrid = ({
               {segments.map((seg) => {
                 const appearance = getItemAppearance(seg.item);
                 return (
-                  <div
+                  <HoverCard
                     key={`${seg.item.id}-${seg.startCol}`}
-                    aria-label={appearance.label}
-                    className={cn(
-                      "h-5 self-center overflow-hidden shadow-sm",
-                      appearance.className,
-                      seg.continuesLeft
-                        ? "rounded-l-none"
-                        : "rounded-l-full",
-                      seg.continuesRight
-                        ? "rounded-r-none"
-                        : "rounded-r-full",
-                    )}
-                    style={{
-                      ...appearance.style,
-                      gridColumn: `${seg.startCol + 1} / ${seg.endCol + 2}`,
-                      gridRow: seg.lane + 1,
-                    }}
-                  />
+                    openDelay={120}
+                    closeDelay={80}
+                  >
+                    <HoverCardTrigger asChild>
+                      <button
+                        type="button"
+                        aria-label={appearance.label}
+                        className={cn(
+                          "pointer-events-auto h-5 w-full cursor-default self-center overflow-hidden p-0 shadow-sm transition-[filter] hover:brightness-105 focus-visible:ring-2 focus-visible:ring-[var(--lagoon-deep)]/60 focus-visible:outline-none",
+                          appearance.className,
+                          seg.continuesLeft
+                            ? "rounded-l-none"
+                            : "rounded-l-full",
+                          seg.continuesRight
+                            ? "rounded-r-none"
+                            : "rounded-r-full",
+                        )}
+                        style={{
+                          ...appearance.style,
+                          gridColumn: `${seg.startCol + 1} / ${seg.endCol + 2}`,
+                          gridRow: seg.lane + 1,
+                        }}
+                      />
+                    </HoverCardTrigger>
+                    <HoverCardContent>
+                      <CalendarItemHoverCard item={seg.item} />
+                    </HoverCardContent>
+                  </HoverCard>
                 );
               })}
             </div>
