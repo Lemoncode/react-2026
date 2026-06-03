@@ -15,6 +15,7 @@ Y también vamos a hacerlo por pasos, aunque le digamos todo lo que queremos hac
 Vamos con el primer prompt:
 
 ```md
+/grill-me 
 Ahora quiero que en la intranet el usuario autenticado vea un calendario con las reservas si hace hover sobre una reserva seria interesante mostrar un tooltip con la información de la reserva, y al hacer click en la reserva, que si está en escritorio aparezca el detalle de la reserva a la derecha, y si está en móvil, que aparezca abajo, y lo idea sería que se pudiera editar, y también se pudiera cambiar el estado de la reserva, y que se pudiera eliminar la reserva, ojo a tener en cuenta, no solo hay reservas, hay un tipo de reserva que es que no está disponible el espacio, y eso se tiene que tener en cuenta a la hora de gestionar que campos son obligatorios de informar.
 
 En Base de datos te paso varios ejemplos de documentos de reserva.
