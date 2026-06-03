@@ -2,9 +2,12 @@ import { LoginForm } from "./components/login-form.component";
 import type { LoginFormValues } from "./login-form.schema";
 import { authClient } from "@/lib/auth-client";
 import { useNavigate } from "@tanstack/react-router";
+import { useToast } from "@/components/ui/toast";
 
 export const Login = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+
   const handleSubmit = async (_values: LoginFormValues) => {
     try {
       const result = await authClient.signIn.email({
@@ -13,15 +16,28 @@ export const Login = () => {
       });
 
       if (result.error) {
-        console.error("Login error:", result.error);
-      } else {
-        console.log("Login successful:", result);
-        navigate({
-          to: "/intranet",
+        toast({
+          variant: "error",
+          title: "No se pudo iniciar sesión",
+          description:
+            result.error.message ?? "Revisa tu email y contraseña.",
         });
+        return;
       }
+
+      toast({
+        variant: "success",
+        title: "Sesión iniciada",
+        description: "Bienvenido de nuevo.",
+      });
+      navigate({ to: "/intranet" });
     } catch (error) {
       console.error("Login failed:", error);
+      toast({
+        variant: "error",
+        title: "No se pudo iniciar sesión",
+        description: "Ha ocurrido un error. Inténtalo de nuevo en unos minutos.",
+      });
     }
   };
 

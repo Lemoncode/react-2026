@@ -212,3 +212,9 @@ export const Login = () => {
 +        navigate({ to: "/intranet" });
       }
 ```
+
+Antes de seguir vamos a mostrar una tostada de éxito o error para el login, vamos a decirle a claude que lo haga por nosotros.
+
+```
+Ahora quiero mostrar una tostada de exito o error cuando se ha hecho el login en src/pods/login/login.pod.tsx sigue la misma aproximación que con otras tostadas de la aplicación
+```
