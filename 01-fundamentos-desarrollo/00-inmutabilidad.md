@@ -13,7 +13,7 @@ pnpm create vite pruebas --template vanilla-ts
 Podemos arrancarlo
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 Y lo vemos funcionando en http://localhost:5173/
@@ -117,6 +117,8 @@ const creaClienteVIP = (nombre: string, apellidos: string): Cliente => {
 -  };
 +  const nuevoCliente: Cliente = {
 +    ...clientePlantilla,
++    nombre: nombre,
++    apellidos: apellidos,
 +    descuento: clientePlantilla.descuento * 2,
 +  };
   return nuevoCliente;
@@ -134,6 +136,8 @@ De hecho podríamos haber escrito esto de forma aún más corta:
 ```ts
 const creaClienteVIP = (nombre: string, apellidos: string): Cliente => ({
     ...clientePlantilla,
+    nombre,
+    apellidos,
     descuento: clientePlantilla.descuento * 2,
 });
 ```

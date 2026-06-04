@@ -99,6 +99,8 @@ console.log("Cliente plantilla:", clientePlantilla);
 const creaClienteVIP = (nombre: string, apellidos: string): Cliente => {
   const nuevoCliente: Cliente = {
     ...clientePlantilla,
+    nombre,
+    apellidos,
 +      descuento: {
 +        ...clientePlantilla.descuento,
 +      },
@@ -116,6 +118,8 @@ Y si queremos ser más elegantes:
 const creaClienteVIP = (nombre: string, apellidos: string): Cliente => {
   const nuevoCliente: Cliente = {
     ...clientePlantilla,
+    nombre,
+    apellidos,
       descuento: {
         ...clientePlantilla.descuento,
 +      valor: clientePlantilla.descuento.valor * 2,
@@ -133,7 +137,7 @@ Pero si tenemos objetos con varios niveles de anidación, esto se puede volver u
 Vamos a instalarla:
 
 ```bash
-npm install immer
+pnpm install immer
 ```
 
 Y ahora podemos hacer esto:
