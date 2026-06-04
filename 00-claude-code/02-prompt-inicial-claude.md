@@ -7,11 +7,11 @@ Arrancar claude e instalar skill de diseño:
 Instalar skills de diseño:
 
 ```
-/plugin marketplace add anthropics/skills
+/plugin marketplace add anthropics/claude-code
 ```
 
 ```
-/plugin install frontend-design@anthropics/skills --scope project
+/plugin install frontend-design@claude-plugins-official
 ```
 
 Copiar también carpeta de skills.
