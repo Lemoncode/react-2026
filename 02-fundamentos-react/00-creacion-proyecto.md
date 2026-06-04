@@ -14,13 +14,13 @@ Esto creará un nuevo proyecto llamado "mi-proyecto" con la plantilla de React y
 
 ```bash
 cd mi-proyecto
-npm install
+pnpm install
 ```
 
 Una vez que las dependencias estén instaladas, puedes iniciar el servidor de desarrollo:
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 Esto abrirá tu proyecto en el navegador en http://localhost:5173/. Ahora tienes un proyecto mínimo de React con TypeScript listo para usar. Puedes empezar a editar los archivos en la carpeta "src" para construir tu aplicación.

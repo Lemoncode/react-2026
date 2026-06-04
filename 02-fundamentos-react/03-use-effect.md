@@ -77,12 +77,16 @@ interface Character {
   image: string;
 }
 
+interface ApiResponse {
+    results: Character[];
+}
+
 export const MiComponente = () => {
   const [characters, setCharacters] = useState<Character[]>([]);
 
   useEffect(() => {
     fetch("https://rickandmortyapi.com/api/character")
-      .then((response) => response.json())
+      .then((response) => response.json() as Promise<ApiResponse>)
       .then((data) => setCharacters(data.results));
   }, []);
 
@@ -106,7 +110,7 @@ La parte importante es esta:
 ```tsx
 useEffect(() => {
   fetch("https://rickandmortyapi.com/api/character")
-    .then((response) => response.json())
+    .then((response) => response.json() as Promise<ApiResponse>)
     .then((data) => setCharacters(data.results));
 }, []);
 ```
@@ -142,7 +146,7 @@ export const MiComponente = () => {
 
   useEffect(() => {
     fetch("https://rickandmortyapi.com/api/character")
-      .then((response) => response.json())
+      .then((response) => response.json() as Promise<ApiResponse>)
       .then((data) => setCharacters(data.results));
   }, []);
 ```
@@ -179,8 +183,9 @@ Para eso metemos `filtro` como dependencia del `useEffect`.
 useEffect(() => {
 - fetch("https://rickandmortyapi.com/api/character")
 + fetch(`https://rickandmortyapi.com/api/character?name=${filtro}`)
-    .then((response) => response.json())
-    .then((data) => setCharacters(data.results));
+    .then((response) => response.json() as Promise<ApiResponse>)
+-    .then((data) => setCharacters(data.results));
++    .then((data) => setCharacters(data.results ?? []));
 -}, []);
 +}, [filtro]);
 ```
@@ -203,14 +208,18 @@ interface Character {
   image: string;
 }
 
+interface ApiResponse {
+    results: Character[];
+}
+
 export const MiComponente = () => {
   const [characters, setCharacters] = useState<Character[]>([]);
   const [filtro, setFiltro] = useState("");
 
   useEffect(() => {
     fetch(`https://rickandmortyapi.com/api/character?name=${filtro}`)
-      .then((response) => response.json())
-      .then((data) => setCharacters(data.results));
+      .then((response) => response.json() as Promise<ApiResponse>)
+      .then((data) => setCharacters(data.results ?? []));
   }, [filtro]);
 
   return (
@@ -289,12 +298,12 @@ Podemos hacerlo usando `setTimeout`.
 ```diff
 useEffect(() => {
 - fetch(`https://rickandmortyapi.com/api/character?name=${filtro}`)
--   .then((response) => response.json())
--   .then((data) => setCharacters(data.results));
+-   .then((response) => response.json() as Promise<ApiResponse>)
+-   .then((data) => setCharacters(data.results ?? []));
 + const timeoutId = setTimeout(() => {
 +   fetch(`https://rickandmortyapi.com/api/character?name=${filtro}`)
-+     .then((response) => response.json())
-+     .then((data) => setCharacters(data.results));
++     .then((response) => response.json() as Promise<ApiResponse>)
++     .then((data) => setCharacters(data.results ?? []));
 + }, 500);
 +
 + return () => {
