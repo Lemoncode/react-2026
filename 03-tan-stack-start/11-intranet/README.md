@@ -165,3 +165,9 @@ Vamos a por el siguiente paso, que se muestre el tooltip con la información de 
 ```
 
 Ahora quiero ir a la edición de detalle, empezamos por mostrar el detalle.
+
+```md
+/grill-me Ahora quiero que cuando se pinche en una reserva/slot, aparezca el detalle de la reserva, al ver el diseño me he dado cuenta que mejor que siempre aparezca abajo, de momento que salga como solo lectura y que haya un icono o no botón (lo que mejor veas a nivel de diseño) para editar la reserva (el edit lo haremos más adelante), deja también preparado un icono o botón para eliminar la reserva / slot, pero de momento que no haga nada, solo que se vea el icono. Asegurate de que el diseño del detalle sea consistente con el resto de la intranet y que se vea bien tanto en escritorio como en móvil
+
+Para que lo pieneses también hara falta un botón para crear reserva, piensa donde poner ese botón, y ten en cuenta para el diseño que vas a hace ahora, que ese flujo estará también en la aplicación a futuro 
+```
