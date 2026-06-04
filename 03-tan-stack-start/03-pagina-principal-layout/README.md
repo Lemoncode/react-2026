@@ -524,6 +524,10 @@ export default function VillaMediterraneaLanding() {
     </main>
   );
 }
-
-
 ```
+
+Con este tenemos la página principal, pero nos quedan varias cosas en el tintero:
+  - No es buena idea leer de content island el contenido estatico cada vez que se cargue una página lo suyo es que esté cacheado globalmente o generado estaticamente.
+  - Lo mismo pasas con el header y el footer, es más aquí igual nos podríamos plantear opciones más drasticas.
+
+Pero en vez de meternos en el agujero de gusano, vamos a tener esto anotado para más adelante y avanzar en la funcionalidad básica (el principio de la "bronca"... si te metes a arreglar una arista pero no avanzas en el objetivo principal, la bronca que te vas a llevar es monumental).

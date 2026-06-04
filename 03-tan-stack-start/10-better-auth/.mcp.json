@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "content-island": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@content-island/mcp"
+      ],
+      "env": {
+        "CONTENT_ISLAND_ACCESS_TOKEN": "d2e92c0f5bc6b23e86cc901026fd51c3"
+      }
+    }
+  }
+}
