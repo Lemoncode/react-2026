@@ -117,7 +117,11 @@ export const IntranetCalendar = ({
       />
 
       {selectedItem && (
-        <CalendarItemDetail item={selectedItem} onClose={handleClose} />
+        <CalendarItemDetail
+          item={selectedItem}
+          items={items}
+          onClose={handleClose}
+        />
       )}
     </section>
   );

@@ -21,3 +21,10 @@ export type {
   TextareaFieldProps,
   TextareaFieldClassNames,
 } from "./textarea-field.component";
+
+export { SelectField } from "./select-field.component";
+export type {
+  SelectFieldProps,
+  SelectFieldOption,
+  SelectFieldClassNames,
+} from "./select-field.component";
