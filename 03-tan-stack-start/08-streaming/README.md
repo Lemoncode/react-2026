@@ -10,7 +10,7 @@ Una cosa muy chula que nos ofrece Tan Stack Start es el streaming, es decir, que
 
 Vamos a simular que por ejemplo la sección de disponibilidad tarda mucho en cargar, y queremos que el usuario pueda ver la info sobre la villa cuanto antes, sin tener que esperar a que cargue toda la información.
 
-Vamos a simular que hay un lag de 5000 segundos en cargar la disponiblidad.
+Vamos a simular que hay un lag de 5000 segundos en cargar la disponibilidad.
 
 _./src/pods/home/availability.api.ts_
 
@@ -74,7 +74,7 @@ export const Route = createFileRoute("/")({
 });
 ```
 
-Tengo que hacer un build o tener funcionando el server y refactoizar el pod de home
+Tengo que hacer un build o tener funcionando el server y refactorizar el pod de home
 
 _src/pods/home/home.pod.tsx_
 
