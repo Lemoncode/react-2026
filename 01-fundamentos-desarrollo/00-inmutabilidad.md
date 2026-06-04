@@ -13,7 +13,7 @@ pnpm create vite pruebas --template vanilla-ts
 Podemos arrancarlo
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 Y lo vemos funcionando en http://localhost:5173/

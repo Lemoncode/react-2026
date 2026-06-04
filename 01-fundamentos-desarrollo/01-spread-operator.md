@@ -137,7 +137,7 @@ Pero si tenemos objetos con varios niveles de anidación, esto se puede volver u
 Vamos a instalarla:
 
 ```bash
-npm install immer
+pnpm install immer
 ```
 
 Y ahora podemos hacer esto:
