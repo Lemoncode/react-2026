@@ -5,6 +5,7 @@ import { IntranetCalendar, getBookingsByMonth } from "@/pods/intranet-calendar";
 const searchSchema = z.object({
   year: z.coerce.number().int().min(2020).max(2100).optional(),
   month: z.coerce.number().int().min(1).max(12).optional(),
+  selected: z.string().optional(),
 });
 
 export const Route = createFileRoute("/(auth)/intranet/")({
@@ -23,5 +24,13 @@ export const Route = createFileRoute("/(auth)/intranet/")({
 
 function RouteComponent() {
   const { items, year, month } = Route.useLoaderData();
-  return <IntranetCalendar items={items} year={year} month={month} />;
+  const { selected } = Route.useSearch();
+  return (
+    <IntranetCalendar
+      items={items}
+      year={year}
+      month={month}
+      selectedId={selected}
+    />
+  );
 }

@@ -171,3 +171,16 @@ Ahora quiero ir a la edición de detalle, empezamos por mostrar el detalle.
 
 Para que lo pieneses también hara falta un botón para crear reserva, piensa donde poner ese botón, y ten en cuenta para el diseño que vas a hace ahora, que ese flujo estará también en la aplicación a futuro 
 ```
+
+```md
+/grill-me Vamos ahora a editar, en este caso quiero que el mismo panel que mostraba la info readonly, que ahora permita editar y grabar o cancelar los cambios, aquí hay que tener muchas cosas en cuenta:
+
+- Usa tanstack form y lo que se ha estado usando en la solución para validar formularios.
+- Si cancelo o cierro y no hay cambios pendientes vamos del tirón
+- Si hay cambios pendientes, al cerrar o cancelar, que salga un modal de confirmación preguntando si queremos descartar los cambios o no.
+- Añade el icono de borrar y con el modal de confirmación para eliminar la reserva/slot.
+
+Ten en cuenta que para crear usaremos el mismo formulario (esto no lo vamos a hacer todavia).
+
+Sobre el diseño acuerdate de usar misma aproximación que el resto de la intranet, y que sea responsivo
+```
