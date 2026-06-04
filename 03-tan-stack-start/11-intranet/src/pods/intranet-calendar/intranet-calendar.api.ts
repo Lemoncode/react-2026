@@ -175,6 +175,112 @@ export const updateCalendarItem = createServerFn({ method: "POST" })
     return mapToCalendarItemVm(updated);
   });
 
+const slugify = (value: string): string =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "") || "anon";
+
+const createInputSchema = z.object({ values: calendarItemFormSchema });
+
+/**
+ * Creates a new booking/block. Protected by `authMiddleware`. Same authoritative
+ * overlap check as the update (no self to exclude) and server-side derived
+ * fields. Returns the created item so the caller can navigate to it.
+ */
+export const createCalendarItem = createServerFn({ method: "POST" })
+  .middleware([authMiddleware])
+  .inputValidator((data: unknown) => createInputSchema.parse(data))
+  .handler(async ({ data }): Promise<CalendarItemVm> => {
+    const { values } = data;
+    const db = await getDb();
+    const collection = db.collection("calendarBlocks");
+
+    const startDate = utcFromIso(values.startDate);
+    const endDate = utcFromIso(values.endDate);
+    const nights = nightsBetween(values.startDate, values.endDate);
+
+    const conflict = await collection.findOne({
+      propertyId: PROPERTY_ID,
+      startDate: { $lt: endDate },
+      endDate: { $gt: startDate },
+      $or: [
+        { type: "booking", status: { $in: ["confirmed", "pending"] } },
+        { type: "block" },
+      ],
+    });
+    if (conflict) {
+      throw new Error("Las fechas se solapan con otra reserva o bloqueo.");
+    }
+
+    const now = new Date();
+    let doc: Record<string, unknown>;
+
+    if (values.type === "block") {
+      doc = {
+        propertyId: PROPERTY_ID,
+        type: "block",
+        subtype: values.subtype,
+        status: "confirmed",
+        startDate,
+        endDate,
+        nights,
+        notes: { internal: values.notesInternal ?? "" },
+        createdAt: now,
+        updatedAt: now,
+      };
+    } else {
+      const subtotal = computeSubtotal(values.nightlyRate, nights);
+      const total = computeTotal(
+        subtotal,
+        values.cleaningFee,
+        values.touristTax,
+        values.discount,
+      );
+      doc = {
+        propertyId: PROPERTY_ID,
+        type: "booking",
+        status: values.status,
+        startDate,
+        endDate,
+        nights,
+        guest: {
+          id: `guest_${slugify(values.guestName)}`,
+          name: values.guestName,
+          email: values.guestEmail,
+          phone: values.guestPhone,
+        },
+        occupancy: {
+          adults: values.adults,
+          children: values.children,
+          babies: values.babies,
+          pets: values.pets,
+        },
+        price: {
+          nightlyRate: values.nightlyRate,
+          cleaningFee: values.cleaningFee,
+          touristTax: values.touristTax,
+          discount: values.discount,
+          subtotal,
+          total,
+          currency: "EUR",
+        },
+        createdAt: now,
+        updatedAt: now,
+      };
+      if (values.status === "cancelled") {
+        doc.cancelledAt = now;
+      }
+    }
+
+    const result = await collection.insertOne(doc);
+    const created = await collection.findOne({ _id: result.insertedId });
+    if (!created) {
+      throw new Error("No se pudo recuperar el elemento creado.");
+    }
+    return mapToCalendarItemVm(created);
+  });
+
 const deleteInputSchema = z.object({ id: z.string().min(1) });
 
 /** Deletes a booking/block by id. Protected by `authMiddleware`. */

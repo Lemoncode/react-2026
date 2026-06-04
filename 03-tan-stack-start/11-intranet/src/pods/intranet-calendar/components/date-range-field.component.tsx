@@ -12,6 +12,8 @@ interface DateRangeFieldProps {
   startName: string;
   endName: string;
   label: string;
+  /** Month the calendar opens on when there is no selection yet. */
+  defaultMonth?: Date;
 }
 
 /**
@@ -24,6 +26,7 @@ export const DateRangeField = ({
   startName,
   endName,
   label,
+  defaultMonth,
 }: DateRangeFieldProps) => (
   <form.Subscribe
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -86,6 +89,7 @@ export const DateRangeField = ({
               mode="range"
               selected={selected}
               onSelect={handleSelect}
+              defaultMonth={defaultMonth}
               locale={es}
               numberOfMonths={1}
               className="bg-transparent"

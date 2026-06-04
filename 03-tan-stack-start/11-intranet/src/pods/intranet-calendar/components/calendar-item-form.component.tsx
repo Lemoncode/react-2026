@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
 import { useBlocker, useRouter } from "@tanstack/react-router";
 
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,7 @@ import {
   TextareaField,
 } from "@/components/form";
 import { useToast } from "@/components/ui/toast";
-import { updateCalendarItem } from "../intranet-calendar.api";
+import { createCalendarItem, updateCalendarItem } from "../intranet-calendar.api";
 import {
   BLOCK_SUBTYPE_OPTIONS,
   BOOKING_STATUS_OPTIONS,
@@ -19,6 +19,7 @@ import {
 } from "../intranet-calendar-form.schema";
 import {
   buildDefaultValues,
+  buildEmptyValues,
   computeSubtotal,
   computeTotal,
   nightsBetween,
@@ -30,11 +31,16 @@ import { ConfirmDialog } from "./confirm-dialog.component";
 import { DateRangeField } from "./date-range-field.component";
 
 interface CalendarItemFormProps {
-  item: CalendarItemVm;
   /** All items in view, used for early client-side overlap feedback. */
   siblings: CalendarItemVm[];
   onCancel: () => void;
-  onSaved: () => void;
+  onSuccess: (item: CalendarItemVm) => void;
+  /** Present in edit mode. */
+  item?: CalendarItemVm;
+  /** Present in create mode. */
+  createType?: "booking" | "block";
+  /** Month the range picker opens on when there is no value yet (create). */
+  defaultMonth?: { year: number; month: number };
 }
 
 const DerivedRow = ({
@@ -93,24 +99,36 @@ const DerivedTotals = ({ form }: { form: any }) => (
 );
 
 export const CalendarItemForm = ({
-  item,
   siblings,
   onCancel,
-  onSaved,
+  onSuccess,
+  item,
+  createType,
+  defaultMonth,
 }: CalendarItemFormProps) => {
   const { toast } = useToast();
   const router = useRouter();
-  const isBlock = item.type === "block";
+  const isCreate = item == null;
+  const type = item ? item.type : createType ?? "booking";
+  const isBlock = type === "block";
   const [pendingCancel, setPendingCancel] = useState(false);
 
+  const monthForPicker = item
+    ? new Date(item.startDate.getUTCFullYear(), item.startDate.getUTCMonth(), 1)
+    : defaultMonth
+      ? new Date(defaultMonth.year, defaultMonth.month - 1, 1)
+      : undefined;
+
   const form = useForm({
-    defaultValues: buildDefaultValues(item) as CalendarItemFormValues,
+    defaultValues: (item
+      ? buildDefaultValues(item)
+      : buildEmptyValues(type)) as CalendarItemFormValues,
     validators: {
       onChange: calendarItemFormSchema,
       onBlur: calendarItemFormSchema,
     },
     onSubmit: async ({ value, formApi }) => {
-      if (overlapsOtherItem(siblings, value, item.id)) {
+      if (overlapsOtherItem(siblings, value, item?.id ?? "")) {
         toast({
           variant: "error",
           title: "Fechas no disponibles",
@@ -119,15 +137,18 @@ export const CalendarItemForm = ({
         return;
       }
       try {
-        await updateCalendarItem({ data: { id: item.id, values: value } });
-        // Reset the baseline so the form is no longer dirty (releases the
-        // navigation blocker) before we switch back to view mode.
+        const result = item
+          ? await updateCalendarItem({ data: { id: item.id, values: value } })
+          : await createCalendarItem({ data: { values: value } });
+        // Clear dirty BEFORE any navigation so the blocker releases.
         formApi.reset(value);
         await router.invalidate();
         toast({
           variant: "success",
-          title: "Cambios guardados",
-          description: "La información se ha actualizado.",
+          title: isCreate ? "Creado" : "Cambios guardados",
+          description: isCreate
+            ? "El elemento se ha creado."
+            : "La información se ha actualizado.",
         });
         if (value.type === "booking" && value.status === "cancelled") {
           toast({
@@ -136,11 +157,11 @@ export const CalendarItemForm = ({
               "Las reservas canceladas no se muestran en el calendario.",
           });
         }
-        onSaved();
+        onSuccess(result);
       } catch (error) {
         toast({
           variant: "error",
-          title: "No se pudo guardar",
+          title: isCreate ? "No se pudo crear" : "No se pudo guardar",
           description:
             error instanceof Error ? error.message : "Inténtalo de nuevo.",
         });
@@ -155,20 +176,19 @@ export const CalendarItemForm = ({
     },
   });
 
-  const isDirty = useStore(form.store, (state) => state.isDirty);
-
-  // Full guard: any navigation (other bar, month nav, back, refresh) while
-  // there are unsaved changes is intercepted and routed to the discard modal.
+  // Full guard: any navigation (other bar, month nav, back, refresh) while there
+  // are unsaved changes is intercepted. Reads the live store so it never blocks
+  // our own post-save navigation (the form is reset to pristine first).
   const blocker = useBlocker({
-    shouldBlockFn: () => isDirty,
-    enableBeforeUnload: () => isDirty,
+    shouldBlockFn: () => form.store.state.isDirty,
+    enableBeforeUnload: () => form.store.state.isDirty,
     withResolver: true,
   });
 
   const discardOpen = blocker.status === "blocked" || pendingCancel;
 
   const handleCancel = () => {
-    if (isDirty) setPendingCancel(true);
+    if (form.store.state.isDirty) setPendingCancel(true);
     else onCancel();
   };
 
@@ -176,6 +196,7 @@ export const CalendarItemForm = ({
     if (blocker.status === "blocked") {
       blocker.proceed();
     } else {
+      form.reset();
       setPendingCancel(false);
       onCancel();
     }
@@ -185,6 +206,14 @@ export const CalendarItemForm = ({
     if (blocker.status === "blocked") blocker.reset();
     setPendingCancel(false);
   };
+
+  const title = isCreate
+    ? isBlock
+      ? "Nuevo bloqueo"
+      : "Nueva reserva"
+    : isBlock
+      ? "Editar bloqueo"
+      : "Editar reserva";
 
   return (
     <>
@@ -198,7 +227,7 @@ export const CalendarItemForm = ({
         className="space-y-5"
       >
         <h2 className="display-title text-xl font-bold text-[var(--sea-ink)]">
-          {isBlock ? "Editar bloqueo" : "Editar reserva"}
+          {title}
         </h2>
 
         <DateRangeField
@@ -206,6 +235,7 @@ export const CalendarItemForm = ({
           startName="startDate"
           endName="endDate"
           label="Fechas"
+          defaultMonth={monthForPicker}
         />
 
         {isBlock ? (
@@ -313,7 +343,13 @@ export const CalendarItemForm = ({
                 disabled={isSubmitting}
                 className="bg-[var(--lagoon-deep)] text-white hover:bg-[#246f76]"
               >
-                {isSubmitting ? "Guardando…" : "Guardar cambios"}
+                {isCreate
+                  ? isSubmitting
+                    ? "Creando…"
+                    : "Crear"
+                  : isSubmitting
+                    ? "Guardando…"
+                    : "Guardar cambios"}
               </Button>
             )}
           </form.Subscribe>

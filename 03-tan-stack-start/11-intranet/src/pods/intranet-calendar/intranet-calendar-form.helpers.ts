@@ -81,6 +81,39 @@ export const buildDefaultValues = (
   };
 };
 
+/** Empty form defaults for a new booking/block (create flow). */
+export const buildEmptyValues = (
+  type: "booking" | "block",
+): CalendarItemFormValues => {
+  if (type === "block") {
+    return {
+      type: "block",
+      startDate: "",
+      endDate: "",
+      subtype: "owner_use",
+      notesInternal: "",
+    };
+  }
+
+  return {
+    type: "booking",
+    startDate: "",
+    endDate: "",
+    status: "confirmed",
+    guestName: "",
+    guestEmail: "",
+    guestPhone: "",
+    adults: 1,
+    children: 0,
+    babies: 0,
+    pets: 0,
+    nightlyRate: 0,
+    cleaningFee: 0,
+    touristTax: 0,
+    discount: 0,
+  };
+};
+
 /**
  * True if the proposed range overlaps another calendar item (excluding the one
  * being edited). Half-open night ranges: [start, end). Used for early client

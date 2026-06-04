@@ -229,7 +229,7 @@ export const CalendarItemDetail = ({
           item={item}
           siblings={items}
           onCancel={() => setMode("view")}
-          onSaved={() => setMode("view")}
+          onSuccess={() => setMode("view")}
         />
       ) : (
         <>
