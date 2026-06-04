@@ -184,3 +184,9 @@ Ten en cuenta que para crear usaremos el mismo formulario (esto no lo vamos a ha
 
 Sobre el diseño acuerdate de usar misma aproximación que el resto de la intranet, y que sea responsivo
 ```
+
+Ahora vamosa a por el crear reserva o bloqueo slot.
+
+```md
+/grill-me Ahora quiero que implementes el flujo de creación de reserva o bloqueo de slot, para esto vamos a usar el mismo formulario que el de edición, pero vacio.
+```
