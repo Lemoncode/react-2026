@@ -89,7 +89,7 @@ export const useNombre = () => {
 # Opción 2: Zustand
 
 ```bash
-npm install zustand
+pnpm install zustand
 ```
 
 ```tsx
@@ -111,7 +111,7 @@ export const useNombreStore = create<NombreStore>()((set) => ({
 # Opción 3: Nano Stores
 
 ```bash
-npm install nanostores @nanostores/react
+pnpm install nanostores @nanostores/react
 ```
 
 ```tsx

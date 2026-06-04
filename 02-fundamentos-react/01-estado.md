@@ -50,7 +50,7 @@ El siguiente paso sería añadir un input para cambiar el nombre, veamos que pas
 import React from "react";
 
 export const MiComponente = () => {
-+ const nombre = "Pepe";
++ let nombre = "Pepe";
 
 -  return <h1>Hola {nombre}</h1>;
 + return (
