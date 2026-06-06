@@ -1,10 +1,10 @@
 # Area privada
 
-Vamos a crear un area privada para permitir al dueño de la propiedad poder ver el calendario de reservas así como modificar entradas, o cancelarlas.
+Vamos a crear un área privada para permitir al dueño de la propiedad poder ver el calendario de reservas así como modificar entradas, o cancelarlas.
 
 ## Pasos
 
-Para ellos necesitamos
+Para ello necesitamos
 
 - Tener un area en la que sea necesario que el usuario se loguee para acceder a ella.
 - Tener un dialogo de login.
@@ -13,7 +13,7 @@ Para ellos necesitamos
 
 ## Area privada
 
-Empezamos por crear un archivo `login.tsx` en el raiz de las rutas.
+Empezamos por crear un archivo `login.tsx` en el raíz de las rutas.
 
 _src/routes/login.tsx_
 
@@ -33,7 +33,7 @@ Vamos a instalar la librería:
 pnpm add better-auth
 ```
 
-Vamos ahora a definir variables para poner el secreto que servira como semilla para generar los tokens, y el tiempo de expiración de los mismos.
+Vamos ahora a definir variables para poner el secreto que servirá como semilla para generar los tokens, y el tiempo de expiración de los mismos.
 
 ```bash
 # Al menos 32 caracteres de longitud, la web de better auth
@@ -180,11 +180,11 @@ Vamos a probarlo
 pnpm run dev
 ```
 
-Tirando de consola parece que funciona, así que vamos a crear una páigna home de la intranet para que navegue a ella.
+Tirando de consola parece que funciona, así que vamos a crear una página home de la intranet para que navegue a ella.
 
 _./src/routes/(auth)/intranet/index.tsx_
 
-Al crear el fichero si tenemos arracnado el run dev se creará automáticamente el código para la ruta.
+Al crear el fichero si tenemos arrancado el run dev se creará automáticamente el código para la ruta.
 
 Ahora volvemos al login, y si el login es correcto, navegamos a la intranet, vamos navegar por código para ello usaremos el hook _useNavigate_ de tan stack router.
 
@@ -265,7 +265,7 @@ Esto está muy bien, pero si abrimos un modo oculto y directamente vamos a `http
 - Podemos crear una server function que nos devuelva el usuario logueado, si no hay usuario logueado que nos redirija a la página de login.
 - Podemos consumir esa server function desde el loader del layout de intranet, así todas las páginas hijas de intranet tendrán esa validación.
 
-Vamos primero a por la server function, dejamos dentro de la carpate _core_
+Vamos primero a por la server function, dejamos dentro de la carpeta _core_
 
 _./src/core/user-session.ts_
 

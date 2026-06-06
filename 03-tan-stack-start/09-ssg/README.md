@@ -11,12 +11,12 @@ Queremos que la página cargue como un tiro y no depender de la velocidad del He
 Pero aquí en la home tenemos un problema:
 
 - Hay una parte que no cambia nunca.
-- Hay otra para que es es la gestión de disponiblidad que si tiene que estar al día.
+- Hay otra parte que es la gestión de disponibilidad que sí tiene que estar al día.
 
 Vamos a por una solución de compromiso:
 
 - Prerrendizo la parte que no cambia nunca.
-- La parte que si cambia la muevo como client only.
+- La parte que sí cambia la muevo como client only.
 
 Empezamos por generar la página de forma estática:
 
@@ -54,9 +54,9 @@ const config = defineConfig({
 
 Si hacemos un build podemos ver que tenemos en `.output/public/index.html` el HTML generado.
 
-Pero tenemo un problema y es que la disopniblidad si la quiero en tiempo real ¿Qué podemos hacer? Pues mover esa parte a un componente client only.
+Pero tenemos un problema y es que la disponibilidad sí la quiero en tiempo real ¿Qué podemos hacer? Pues mover esa parte a un componente client only.
 
-Para ello quitamos del hompe page la parte de disponibilidad y la movemos a un componente client only.
+Para ello quitamos del home page la parte de disponibilidad y la movemos a un componente client only.
 
 _./src/routes/index.tsx_
 

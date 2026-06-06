@@ -2,13 +2,13 @@
 
 ## Crear proyecto
 
-Vamos a ver porque es importante la inmutabilidad, así como conceptos clave.
+Vamos a ver por qué es importante la inmutabilidad, así como conceptos clave.
 
 ```bash
 pnpm create vite pruebas --template vanilla-ts
 ```
 
-> Si no tienes pnpm, puedes instalarlo:npm install -g pnpm
+> Si no tienes pnpm, puedes instalarlo: npm install -g pnpm
 
 Podemos arrancarlo
 
@@ -24,7 +24,7 @@ Nos cargamos lo que hay en main.ts
 
 Vamos a empezar a jugar con objetos.
 
-Imaginate que tengo esto:
+Imagínate que tengo esto:
 
 _./main.ts_
 
@@ -54,7 +54,7 @@ const creaClienteVIP = (nombre: string, apellidos: string): Cliente => {
 };
 ```
 
-¿Que pasa si hacemos esto?
+¿Qué pasa si hacemos esto?
 
 ```ts
 // Paso 1 ver por consola
@@ -75,13 +75,13 @@ Pues que al modificar el nuevo cliente, también hemos modificado el cliente pla
 
 Esto es un ejemplo de por qué la inmutabilidad es importante: si no queremos que los cambios en un objeto afecten a otros, debemos crear copias en lugar de modificar directamente los objetos existentes.
 
-Varias temas a tener en cuenta de esta cagada:
+Varios temas a tener en cuenta de esta cagada:
 
 - Siempre es mejor crear un nuevo objeto en lugar de modificar uno existente, nunca sabes quién más lo está usando (**efecto colateral**).
 
-- Siempre que puedas intenta que una **función sea pura**, es decir, que no tenga efectos colaterales y que su salida dependa solo de sus entradas ¿Qué quiere decir esto? Que para mismos parametros de entrada siempre devuelva el mismo resultado, sin modificar nada fuera de la función.
+- Siempre que puedas intenta que una **función sea pura**, es decir, que no tenga efectos colaterales y que su salida dependa solo de sus entradas ¿Qué quiere decir esto? Que para mismos parámetros de entrada siempre devuelva el mismo resultado, sin modificar nada fuera de la función.
 
-- No suele ser buena idea modificar parametros de entrada, mejor crear un nuevo objeto a partir de ellos.
+- No suele ser buena idea modificar parámetros de entrada, mejor crear un nuevo objeto a partir de ellos.
 
 ## Asignación inmutable
 
@@ -104,7 +104,7 @@ const creaClienteVIP = (nombre: string, apellidos: string): Cliente => {
 };
 ```
 
-Si ahora probamos esto funciona ¿Pero le véis algún problema a esta aproximación?
+Si ahora probamos esto funciona ¿Pero le veis algún problema a esta aproximación?
 
 Vamos a simplificar, para ello vamos a usar el _spread operator_ de JavaScript.
 
@@ -128,8 +128,8 @@ const creaClienteVIP = (nombre: string, apellidos: string): Cliente => {
 ¿Qué estamos haciendo aquí?
 
 - Creamos un objeto con las llaves.
-- Con los tres puntitos es como si abrieramos la lata de clientePlantilla y copiáramos todas sus propiedades dentro del nuevo objeto.
-- Una vez copiada, sobreescribimos el campo descuento.
+- Con los tres puntitos es como si abriéramos la lata de clientePlantilla y copiáramos todas sus propiedades dentro del nuevo objeto.
+- Una vez copiada, sobrescribimos el campo descuento.
 
 De hecho podríamos haber escrito esto de forma aún más corta:
 

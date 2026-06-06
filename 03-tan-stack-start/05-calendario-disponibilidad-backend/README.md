@@ -1,6 +1,6 @@
 # Calendario - Backend
 
-Ya tenemos la infra, siguiente paso vamos a crear una server function dentro nuestro proyecto de tan stack start (si, para proyectos simples no nos hace falta crear un proyecto de backend), el que vamos a leer los datos de diposnibilidad para un mes dado, y eso lo leeremos en la página principal, y de momento lo mostraremos por consola.
+Ya tenemos la infra, siguiente paso vamos a crear una server function dentro nuestro proyecto de tan stack start (si, para proyectos simples no nos hace falta crear un proyecto de backend), en el que vamos a leer los datos de disponibilidad para un mes dado, y eso lo leeremos en la página principal, y de momento lo mostraremos por consola.
 
 ¿Qué prompt usaríamos?
 
