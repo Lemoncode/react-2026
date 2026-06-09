@@ -8,7 +8,7 @@ Vamos a usar Vite, que es una herramienta de construcción rápida para proyecto
 pnpm create vite mi-proyecto --template react-ts
 ```
 
-> Si no tienes pnpm, puedes instalarlo:npm install -g pnpm
+> Si no tienes pnpm, puedes instalarlo: npm install -g pnpm
 
 Esto creará un nuevo proyecto llamado "mi-proyecto" con la plantilla de React y TypeScript. Luego, puedes navegar a la carpeta del proyecto e instalar las dependencias:
 

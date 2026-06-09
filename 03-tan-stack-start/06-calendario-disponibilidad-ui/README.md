@@ -1,6 +1,6 @@
 # Calendario - UI
 
-Ya tengo una server function que me carga la diponibilidad de un mes dado, ahora quiero conectar el UI con esa función para mostrar la disponibilidad en el calendario, y después permitir que el usuario pueda elegir rangos de fechas, quiero reservar desde este día a este otro día.
+Ya tengo una server function que me carga la disponibilidad de un mes dado, ahora quiero conectar el UI con esa función para mostrar la disponibilidad en el calendario, y después permitir que el usuario pueda elegir rangos de fechas, quiero reservar desde este día a este otro día.
 
 Así que vamos por pasos, primer prompt
 
@@ -10,7 +10,7 @@ Así que vamos por pasos, primer prompt
 
 Antes de ponernos con la selección hay un detalle que sería bueno arreglar: Debajo de disponibilidad siempre pone "Mayo de 2026" lo suyo es que ponga el mes que se está mostrando.
 
-Este es muy facil
+Este es muy fácil
 
 ```md
 Debajo de disponibilidad siempre pone "Mayo de 2026" lo suyo es que ponga el mes que se está mostrando.
@@ -18,8 +18,8 @@ Debajo de disponibilidad siempre pone "Mayo de 2026" lo suyo es que ponga el mes
 
 ## Seleccion
 
-Ahora vamos a por la selección, quiero que el usario pueda realizar la selección y que al pulsar en el botón de consultar diposnibilidad, de momento me muestre un console.log con la seleccion de fechas
+Ahora vamos a por la selección, quiero que el usuario pueda realizar la selección y que al pulsar en el botón de consultar diposnibilidad, de momento me muestre un console.log con la selección de fechas
 
 ```md
-/grill-me Ahora vamos a por la selección, quiero que el usario pueda realizar la selección y que al pulsar en el botón de consultar disponibilidad, de momento me muestre un console.log con la seleccion de fechas
+/grill-me Ahora vamos a por la selección, quiero que el usuario pueda realizar la selección y que al pulsar en el botón de consultar disponibilidad, de momento me muestre un console.log con la selección de fechas
 ```

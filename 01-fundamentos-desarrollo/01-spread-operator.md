@@ -1,6 +1,6 @@
 # Spread operator
 
-Vamos a entender como funciona el spread operator de JS.
+Vamos a entender cómo funciona el spread operator de JS.
 
 Con cliente plantilla:
 
@@ -12,7 +12,7 @@ const clientePlantilla: Cliente = {
 };
 ```
 
-¿Que pasa si hago esto?
+¿Qué pasa si hago esto?
 
 ```ts
 const nuevoCliente = {
@@ -35,7 +35,7 @@ nuevoCliente.descuento = 30;
 
 ¿Cambia el original?
 
-Vamos a meter un poco más de complejidad, imaginate que descuento es un objeto:
+Vamos a meter un poco más de complejidad, imagínate que descuento es un objeto:
 
 ```ts
 interface Cliente {
@@ -77,7 +77,7 @@ const creaClienteVIP = (nombre: string, apellidos: string): Cliente => {
 };
 ```
 
-¿Que pasa ahora si hago?
+¿Qué pasa ahora si hago?
 
 ```ts
 const cliente1 = creaClienteVIP("Pepe", "Perez");
@@ -91,7 +91,7 @@ console.log("Cliente plantilla:", clientePlantilla);
 
 ¿Qué está pasando aquí? Que el spread operator hace una copia superficial, es decir sólo el primer nivel, si tenemos objetos anidados, el spread no hace una copia profunda, por lo que si modificamos un objeto anidado, estamos modificando el original. Esto es algo a tener en cuenta cuando trabajamos con objetos complejos.
 
-¿Coomooo? Si, y esto es bueno ya que a nivel de rendimiento va como una moto y también sirve para ver si tenemos que repintar un componentes o no.
+¿Coomooo? Sí, y esto es bueno ya que a nivel de rendimiento va como una moto y también sirve para ver si tenemos que repintar un componente o no.
 
 ¿Cómo podríamos arreglarlo?
 
@@ -99,6 +99,8 @@ console.log("Cliente plantilla:", clientePlantilla);
 const creaClienteVIP = (nombre: string, apellidos: string): Cliente => {
   const nuevoCliente: Cliente = {
     ...clientePlantilla,
+    nombre,
+    apellidos,
 +      descuento: {
 +        ...clientePlantilla.descuento,
 +      },
@@ -116,6 +118,8 @@ Y si queremos ser más elegantes:
 const creaClienteVIP = (nombre: string, apellidos: string): Cliente => {
   const nuevoCliente: Cliente = {
     ...clientePlantilla,
+    nombre,
+    apellidos,
       descuento: {
         ...clientePlantilla.descuento,
 +      valor: clientePlantilla.descuento.valor * 2,
@@ -133,7 +137,7 @@ Pero si tenemos objetos con varios niveles de anidación, esto se puede volver u
 Vamos a instalarla:
 
 ```bash
-npm install immer
+pnpm install immer
 ```
 
 Y ahora podemos hacer esto:

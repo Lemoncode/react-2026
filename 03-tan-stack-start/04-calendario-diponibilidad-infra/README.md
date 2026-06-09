@@ -2,14 +2,14 @@
 
 Vamos ahora a por el calendario de disponibilidad, aquí tenemos lógica de negocio y datos propios que guardar.
 
-Desafios:
+Desafíos:
   - Tenemos que modelar esto (no es Front End, pero nos toca como emprendedores que somos).
   - Tenemos que crear un entorno dockerizado para la BBDD y que sea fácil usarlo para todos.
   - Tenemos que crear un console runner para alimentar con los datos iniciales.
 
 Empezamos por definir un mongoDB en un dockerfile para poder levantarlo y que cualquier desarrollador pueda trabajar con el sin tener que instalar mongo en su máquina local.
 
-Vamos con un prompt en planning (Esto lo podría sacar también con chatp gpt):
+Vamos con un prompt en planning (Esto lo podría sacar también con chat GPT):
 
 ```
 /grill-me Vamos por pasos, primero quiero tener un docker compose para levantar un mongodb que persista los datos en el disco duro local, y los comandos en el package.json para levantarlo etc, y más adelante (no en este paso) crearemos un console runner para crear BBDD y alimentar datos de prueba, pero de primeras el docker file
@@ -204,7 +204,7 @@ Consulta principal:
 ```
 
 ---
-## Apendice: Base de datos local (MongoDB)
+## Apéndice: Base de datos local (MongoDB)
 
 Requisitos: Docker Desktop instalado.
 

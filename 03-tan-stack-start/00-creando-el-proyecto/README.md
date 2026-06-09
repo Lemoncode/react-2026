@@ -1,6 +1,6 @@
 # Creando un proyecto desde cero
 
-La forma más rápida de crear un proyecto basada con Tan Stack Start
+La forma más rápida de crear un proyecto basado con Tan Stack Start
 
 ```bash
 pnpm dlx @tanstack/cli@latest create

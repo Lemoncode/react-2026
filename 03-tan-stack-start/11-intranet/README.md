@@ -1,12 +1,12 @@
 # Intranet
 
-Vamos ahora a por la intranet, aquí vamos a tirar de Claude a tope, y vamos a ir avanzado por pasos pero contandole todo lo que queremos hacer.
+Vamos ahora a por la intranet, aquí vamos a tirar de Claude a tope, y vamos a ir avanzando por pasos pero contandole todo lo que queremos hacer.
 
 Lo ideal sería partir de un Figma o un Pencil tirando de controles de ShadCN, pero vamos a ir más rápido y confiar con Claude.
 
 Antes de escribir el prompt, vamos plantear que queremos hacer:
 
-Queremos tener un panel de intranet el que el usuario vea un calendario con las reservas si hace hover sobre una reserva seria interesante mostrar un tooltip con la información de la reserva, y al hacer click en la reserva, que si está en escritorio aparezca el detalle de la reserva a la derecha, y si está en móvil, que aparezca abajo, y lo idea sería que se pudiera editar, y también se pudiera cambiar el estado de la reserva, y que se pudiera eliminar la reserva, ojo a tener en cuenta, no solo hay reservas, hay un tipo de reserva que es que no está disponible el espacio, y eso se tiene que tener en cuenta a la hora de gestionar que campos son obligatorios de informar.
+Queremos tener un panel de intranet el que el usuario vea un calendario con las reservas si hace hover sobre una reserva sería interesante mostrar un tooltip con la información de la reserva, y al hacer click en la reserva, que si está en escritorio aparezca el detalle de la reserva a la derecha, y si está en móvil, que aparezca abajo, y lo ideal sería que se pudiera editar, y también se pudiera cambiar el estado de la reserva, y que se pudiera eliminar la reserva, ojo a tener en cuenta, no solo hay reservas, hay un tipo de reserva que es que no está disponible el espacio, y eso se tiene que tener en cuenta a la hora de gestionar que campos son obligatorios de informar.
 
 Además le daremos como info un ejemplo de documento de mongoDb para que lo tenga en cuenta.
 
@@ -16,7 +16,7 @@ Vamos con el primer prompt:
 
 ```md
 /grill-me 
-Ahora quiero que en la intranet el usuario autenticado vea un calendario con las reservas si hace hover sobre una reserva seria interesante mostrar un tooltip con la información de la reserva, y al hacer click en la reserva, que si está en escritorio aparezca el detalle de la reserva a la derecha, y si está en móvil, que aparezca abajo, y lo idea sería que se pudiera editar, y también se pudiera cambiar el estado de la reserva, y que se pudiera eliminar la reserva, ojo a tener en cuenta, no solo hay reservas, hay un tipo de reserva que es que no está disponible el espacio, y eso se tiene que tener en cuenta a la hora de gestionar que campos son obligatorios de informar.
+Ahora quiero que en la intranet el usuario autenticado vea un calendario con las reservas si hace hover sobre una reserva sería interesante mostrar un tooltip con la información de la reserva, y al hacer click en la reserva, que si está en escritorio aparezca el detalle de la reserva a la derecha, y si está en móvil, que aparezca abajo, y lo ideal sería que se pudiera editar, y también se pudiera cambiar el estado de la reserva, y que se pudiera eliminar la reserva, ojo a tener en cuenta, no solo hay reservas, hay un tipo de reserva que es que no está disponible el espacio, y eso se tiene que tener en cuenta a la hora de gestionar que campos son obligatorios de informar.
 
 En Base de datos te paso varios ejemplos de documentos de reserva.
 
@@ -165,3 +165,28 @@ Vamos a por el siguiente paso, que se muestre el tooltip con la información de 
 ```
 
 Ahora quiero ir a la edición de detalle, empezamos por mostrar el detalle.
+
+```md
+/grill-me Ahora quiero que cuando se pinche en una reserva/slot, aparezca el detalle de la reserva, al ver el diseño me he dado cuenta que mejor que siempre aparezca abajo, de momento que salga como solo lectura y que haya un icono o no botón (lo que mejor veas a nivel de diseño) para editar la reserva (el edit lo haremos más adelante), deja también preparado un icono o botón para eliminar la reserva / slot, pero de momento que no haga nada, solo que se vea el icono. Asegurate de que el diseño del detalle sea consistente con el resto de la intranet y que se vea bien tanto en escritorio como en móvil
+
+Para que lo pieneses también hara falta un botón para crear reserva, piensa donde poner ese botón, y ten en cuenta para el diseño que vas a hace ahora, que ese flujo estará también en la aplicación a futuro 
+```
+
+```md
+/grill-me Vamos ahora a editar, en este caso quiero que el mismo panel que mostraba la info readonly, que ahora permita editar y grabar o cancelar los cambios, aquí hay que tener muchas cosas en cuenta:
+
+- Usa tanstack form y lo que se ha estado usando en la solución para validar formularios.
+- Si cancelo o cierro y no hay cambios pendientes vamos del tirón
+- Si hay cambios pendientes, al cerrar o cancelar, que salga un modal de confirmación preguntando si queremos descartar los cambios o no.
+- Añade el icono de borrar y con el modal de confirmación para eliminar la reserva/slot.
+
+Ten en cuenta que para crear usaremos el mismo formulario (esto no lo vamos a hacer todavia).
+
+Sobre el diseño acuerdate de usar misma aproximación que el resto de la intranet, y que sea responsivo
+```
+
+Ahora vamosa a por el crear reserva o bloqueo slot.
+
+```md
+/grill-me Ahora quiero que implementes el flujo de creación de reserva o bloqueo de slot, para esto vamos a usar el mismo formulario que el de edición, pero vacio.
+```

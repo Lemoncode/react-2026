@@ -18,6 +18,8 @@ interface MonthCalendarGridProps {
   month: number;
   items: CalendarItemVm[];
   today: Date;
+  selectedId?: string | null;
+  onSelect: (id: string) => void;
 }
 
 export const MonthCalendarGrid = ({
@@ -25,6 +27,8 @@ export const MonthCalendarGrid = ({
   month,
   items,
   today,
+  selectedId,
+  onSelect,
 }: MonthCalendarGridProps) => {
   const weeks = buildMonthWeeks(year, month, today);
 
@@ -91,6 +95,7 @@ export const MonthCalendarGrid = ({
             >
               {segments.map((seg) => {
                 const appearance = getItemAppearance(seg.item);
+                const isSelected = seg.item.id === selectedId;
                 return (
                   <HoverCard
                     key={`${seg.item.id}-${seg.startCol}`}
@@ -101,9 +106,13 @@ export const MonthCalendarGrid = ({
                       <button
                         type="button"
                         aria-label={appearance.label}
+                        aria-pressed={isSelected}
+                        onClick={() => onSelect(seg.item.id)}
                         className={cn(
-                          "pointer-events-auto h-5 w-full cursor-default self-center overflow-hidden p-0 shadow-sm transition-[filter] hover:brightness-105 focus-visible:ring-2 focus-visible:ring-[var(--lagoon-deep)]/60 focus-visible:outline-none",
+                          "pointer-events-auto h-5 w-full cursor-pointer self-center overflow-hidden p-0 shadow-sm transition-[filter] hover:brightness-105 focus-visible:ring-2 focus-visible:ring-[var(--lagoon-deep)]/60 focus-visible:outline-none",
                           appearance.className,
+                          isSelected &&
+                            "ring-2 ring-[var(--sea-ink)]/70 ring-offset-1 brightness-105",
                           seg.continuesLeft
                             ? "rounded-l-none"
                             : "rounded-l-full",

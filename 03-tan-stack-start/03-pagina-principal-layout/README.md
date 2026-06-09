@@ -1,10 +1,10 @@
 # Página principal Layout
 
-Todo esto que hemos hecho, podríamos haberlo generado utilizando Claude Code, pero es bueno conocer porque se hacen las cosas, de hecho volveremos a este código cuando querramos optimizar el rendimiento de la página.
+Todo esto que hemos hecho, podríamos haberlo generado utilizando Claude Code, pero es bueno conocer por qué se hacen las cosas, de hecho volveremos a este código cuando querramos optimizar el rendimiento de la página.
 
-Para montar la maquetacíon vamos a partir del JSX inicial que nos genero Chat GPT (aquí podéis usar Pencil, o Figma o lo que mejor os venga), y vamos a pedir que utilice ShadCN, que sea responsivo y que ademas lo mezcle con el contenido de Content Island para que una persona no técnica pueda modificarlo.
+Para montar la maquetación vamos a partir del JSX inicial que nos generó Chat GPT (aquí podéis usar Pencil, o Figma o lo que mejor os venga), y vamos a pedir que utilice ShadCN, que sea responsivo y que además lo mezcle con el contenido de Content Island para que una persona no técnica pueda modificarlo.
 
-IMPORTANTE (1) COPIATE LOS SKILLS DE 01 y pegalos en `./claude/skills/`
+IMPORTANTE (1) CÓPIATE LOS SKILLS DE 01 y pégalos en `./claude/skills/`
 
 IMPORTANTE (2) Nos instalamos el skill de diseño de front end de claude
 
@@ -527,7 +527,7 @@ export default function VillaMediterraneaLanding() {
 ```
 
 Con este tenemos la página principal, pero nos quedan varias cosas en el tintero:
-  - No es buena idea leer de content island el contenido estatico cada vez que se cargue una página lo suyo es que esté cacheado globalmente o generado estaticamente.
-  - Lo mismo pasas con el header y el footer, es más aquí igual nos podríamos plantear opciones más drasticas.
+  - No es buena idea leer de content island el contenido estático cada vez que se cargue una página lo suyo es que esté cacheado globalmente o generado estáticamente.
+  - Lo mismo pasa con el header y el footer, es más aquí igual nos podríamos plantear opciones más drásticas.
 
 Pero en vez de meternos en el agujero de gusano, vamos a tener esto anotado para más adelante y avanzar en la funcionalidad básica (el principio de la "bronca"... si te metes a arreglar una arista pero no avanzas en el objetivo principal, la bronca que te vas a llevar es monumental).
