@@ -47,7 +47,7 @@ Ahora que han funcionado, mejora el skill con lo que has aprendido, hazlo perfec
 Otro tema interesante es instalar lucide-icons
 
 ```bash
-npm install lucide-react
+pnpm install lucide-react
 ```
 
 Aquí en el Claude MD podemos indicar que siempre que vaya a usar un icono que busque en lucide-react y lo use.
@@ -69,6 +69,8 @@ pnpm add @content-island/api-client
 ```
 
 Lo primero que vamos a hacer es meter la variable de entorno con el token de lectura para poder leer estos datos:
+
+_./.env_
 
 ```bash
 CONTENT_ISLAND_ACCESS_TOKEN=d2e92c0f5bc6b23e86cc901026fd51c3
@@ -314,7 +316,7 @@ export const Route = createFileRoute('/')({
 })
 
 function App() {
-  const { content } = Route.useLoaderData<{ content: FullMainPageVm }>();
++  const { content } = Route.useLoaderData();
 
   return (
 +    <main className="page-wrap px-4 pb-8 pt-14">

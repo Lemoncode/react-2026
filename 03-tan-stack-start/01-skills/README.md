@@ -3,11 +3,11 @@
 Lo primero vamos a instalar el skill de Claude para Front End:
 
 ```bash
-/plugin marketplace add anthropics/skills
+/plugin marketplace add anthropics/claude-code
 ```
 
 ```bash
-/plugin install frontend-design@anthropics/skills --scope project
+/plugin install frontend-design@claude-plugins-official
 ```
 
 Ahora vamos a copiar una serie de skills del repositorio de demos de este curso.
