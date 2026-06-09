@@ -381,13 +381,79 @@ export const Footer = () => {
 pnpm install nanostores @nanostores/react
 ```
 
+_nombre.nano.ts_
+
 ```tsx
 import { atom } from "nanostores";
 
 export const $nombre = atom("Pepe");
+```
 
-export const setNombre = (nuevoNombre: string) => {
-  $nombre.set(nuevoNombre);
+En Body
+
+_./src/body.tsx_
+
+```diff
+- import { useNombreStore } from "./nombre.store";
++ import { $nombre } from "./nombre.nano";
++ import { useStore } from "@nanostores/react";
+
+export const Body = () => {
+-  const { nombre, setNombre } = useNombreStore();
++  const nombre = useStore($nombre);
+
+  return (
+    <div>
+      <h2>Body</h2>
+-      <p>Nombre: {nombre}</p>
++     <p>Nombre: {nombre}</p>
+      <input
+        type="text"
++        value={nombre}
++        onChange={(e) => $nombre.set(e.target.value)}
+      />
+    </div>
+  );
+};
+
+```
+
+En Header
+
+```diff
+- import { useNombreStore } from "./nombre.store";
++ import { $nombre } from "./nombre.nano";
++import { useStore } from "@nanostores/react";
+
+export const Header = () => {
+-  const { nombre } = useNombreStore();
++ const nombre = useStore($nombre);
+
+  return (
+    <div>
+      <h2>Header</h2>
+      <p>Nombre: {nombre}</p>
+    </div>
+  );
+};
+
+```
+
+En Footer
+
+```diff
+- import { useNombreStore } from "./nombre.store";
++ import { $nombre } from "./nombre.nano";
++import { useStore } from "@nanostores/react";
+
+export const Footer = () => {
+-  const { nombre } = useNombreStore();
+  return (
+    <div>
+      <h2>Footer</h2>
+      <p>Nombre: {nombre}</p>
+    </div>
+  );
 };
 ```
 
