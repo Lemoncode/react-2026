@@ -45,9 +45,125 @@ Pero cuando aparece mucho, suele ser una señal de que necesitamos otra forma de
 
 Ahí entran los estados globales.
 
----
+Vamos a crear un componente body que consuma editar nombre y mostrar nombre.
+
+_./src/body.tsx_
+
+```tsx
+import React from "react";
+
+export const Body = () => {
+  const [nombre, setNombre] = React.useState("Pepe");
+
+  return (
+    <div>
+      <h2>Body</h2>
+      <p>Nombre: {nombre}</p>
+      <input
+        type="text"
+        value={nombre}
+        onChange={(e) => setNombre(e.target.value)}
+      />
+    </div>
+  );
+};
+```
+
+Y lo reemplazamos en App:
+
+_./src/App.tsx_
+
+```diff
+import "./App.css";
+- import { MiComponente } from "./micomponente";
++ import { Body } from "./body";
+
+function App() {
+
+  return (
+    <>
++      <Body />
+-      <MiComponente/>
+    </>
+  );
+}
+
+export default App;
+
+```
+
+Hasta aquí bien, vamos ahora a crear un componente header y un footer.
+
+_./src/header.tsx_
+
+```tsx
+import React from "react";
+export const Header = () => {
+  return (
+    <div>
+      <h2>Header</h2>
+      <p>Nombre: **Aquí iría el nombre**</p>
+    </div>
+  );
+};
+```
+
+_./src/footer.tsx_
+
+```tsx
+import React from "react";
+
+export const Footer = () => {
+  return (
+    <div>
+      <h2>Footer</h2>
+      <p>Nombre: **Aquí iría el nombre**</p>
+    </div>
+  );
+};
+```
+
+Y vamos a añadirlo en App:
+
+_./src/App.tsx_
+
+```diff
+import "./App.css";
+import { Body } from "./body";
++ import { Header } from "./header";
++ import { Footer } from "./footer";
+
+function App() {
+
+  return (
+    <>
++      <Header />
+      <Body />
++      <Footer />
+    </>
+  );
+}
+
+export default App;
+```
+
+Ahora que pasa?
+
+```bash
+npm run dev
+```
+
+¿Cómo podemos compartir el estado del nombre entre Header, Body y Footer?
+
+Una opción sería subir a _App_ el estado y pasarlo por props a los componentes hijos.
+
+Pero eso es prop drilling, y en un proyecto grande puede ser un problema.
+
+Vamos a probr otras opciones para compartir estado global.
 
 # Opción 1: Context de React
+
+_./src/nombre.context.tsx_
 
 ```tsx
 import React, { createContext, useContext, useState } from "react";
@@ -81,6 +197,93 @@ export const useNombre = () => {
   }
 
   return context;
+};
+```
+
+Y como usamos esto:
+
+_./src/App.tsx_
+
+```diff
+import "./App.css";
+import { MiComponente } from "./micomponente";
++ import { NombreProvider } from "./nombre.context";
+
+function App() {
+
+  return (
+    <>
++      <NombreProvider>
+        <Header/>
+        <Body/>
+        <Footer/>
++      </NombreProvider>
+    </>
+  );
+}
+
+export default App;
+```
+
+Y en cada componente:
+
+_./src/body.tsx_
+
+```diff
+import React from "react";
++ import { useNombre } from "./nombre.context";
+
+export const Body = () => {
+-  const [nombre, setNombre] = React.useState("Pepe");
++  const { nombre, setNombre } = useNombre();
+
+  return (
+    <div>
+      <h2>Body</h2>
+      <p>Nombre: {nombre}</p>
+      <input
+        type="text"
+        value={nombre}
+        onChange={(e) => setNombre(e.target.value)}
+      />
+    </div>
+  );
+};
+```
+
+_./src/header.tsx_
+
+```diff
+import React from "react";
++ import { useNombre } from "./nombre.context";
+
+export const Header = () => {
++ const { nombre } = useNombre();
+  return (
+    <div>
+      <h2>Header</h2>
+-      <p>Nombre: **Aquí iría el nombre**</p>
++      <p>Nombre: {nombre}</p>
+    </div>
+  );
+};
+```
+
+Y en el footer igual:
+
+```diff
+import React from "react";
++ import { useNombre } from "./nombre.context";
+
+export const Footer = () => {
++ const { nombre } = useNombre();
+  return (
+    <div>
+      <h2>Footer</h2>
+-      <p>Nombre: **Aquí iría el nombre**</p>
++      <p>Nombre: {nombre}</p>
+    </div>
+  );
 };
 ```
 
