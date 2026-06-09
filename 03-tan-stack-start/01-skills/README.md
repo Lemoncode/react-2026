@@ -12,15 +12,15 @@ Lo primero vamos a instalar el skill de Claude para Front End:
 
 Ahora vamos a copiar una serie de skills del repositorio de demos de este curso.
 
-Aquí tienes una guía de para que sirven, y conforme avancemos con el proyecto, iremos tocando alguno.
+Aquí tienes una guía de para qué sirven, y conforme avancemos con el proyecto, iremos tocando alguno.
 
-Lo copiaremos la ruta del proyecto
+Lo copiaremos en la ruta del proyecto
 
 ```
 .claude/skills
 ```
 
-El único que no vamos a usar es el de "project setup" que a su vez tira de blueprints, y que configuraría nuestros proyecto de una forma concreta.
+El único que no vamos a usar es el de "project setup" que a su vez tira de blueprints, y que configuraría nuestro proyecto de una forma concreta.
 
 # Guía de skills — `skills-para-copiar`
 

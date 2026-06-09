@@ -1,6 +1,6 @@
 # Estado en React
 
-En React los componentes son funciones, y esto afecta mucho a como trabajamos.
+En React los componentes son funciones, y esto afecta mucho a cómo trabajamos.
 
 Vamos a crear nuestro primer componente:
 
@@ -12,7 +12,7 @@ export const MiComponente = () => {
 };
 ```
 
-Vamos a ahora a utilizar este componente en nuestra aplicación:
+Vamos ahora a utilizar este componente en nuestra aplicación:
 
 ```diff
 import React from "react";
@@ -62,7 +62,7 @@ export const MiComponente = () => {
 };
 ```
 
-Si te fijas si intentamos ejecutra esto, al teclear no pasa nada, el valor del input no cambia, y el nombre tampoco.
+Si te fijas si intentamos ejecutar esto, al teclear no pasa nada, el valor del input no cambia, y el nombre tampoco.
 
 Esto es normal, a fin de cuentas tenemos una función, que al volver a renderizarse el componente se vuelve a ejecutar, y el valor de nombre se vuelve a establecer a "Pepe", por lo que no cambia.
 
