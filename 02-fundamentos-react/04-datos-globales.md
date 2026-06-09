@@ -448,6 +448,7 @@ En Footer
 
 export const Footer = () => {
 -  const { nombre } = useNombreStore();
++ const nombre = useStore($nombre);
   return (
     <div>
       <h2>Footer</h2>
