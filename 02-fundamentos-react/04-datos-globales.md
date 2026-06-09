@@ -295,6 +295,8 @@ export const Footer = () => {
 pnpm install zustand
 ```
 
+_./nombre.store.ts_
+
 ```tsx
 import { create } from "zustand";
 
@@ -307,6 +309,68 @@ export const useNombreStore = create<NombreStore>()((set) => ({
   nombre: "Pepe",
   setNombre: (nuevoNombre) => set({ nombre: nuevoNombre }),
 }));
+```
+
+Ahora en body:
+
+_./src/body.tsx_
+
+```diff
+import { useNombre } from "./nombre.context";
++ import { useNombreStore } from "./nombre.store";
+export const Body = () => {
+-  const { nombre, setNombre } = useNombre();
++ const { nombre, setNombre } = useNombreStore();
+
+  return (
+    <div>
+      <h2>Body</h2>
+      <p>Nombre: {nombre}</p>
+      <input
+        type="text"
+        value={nombre}
+        onChange={(e) => setNombre(e.target.value)}
+      />
+    </div>
+  );
+};
+```
+
+En Header:
+
+```diff
+- import { useNombre } from "./nombre.context";
++ import { useNombreStore } from "./nombre.store";
+
+export const Header = () => {
+-  const { nombre } = useNombre();
++  const { nombre } = useNombreStore();
+
+  return (
+    <div>
+      <h2>Header</h2>
+      <p>Nombre: {nombre}</p>
+    </div>
+  );
+};
+```
+
+En Footer
+
+```diff
+- import { useNombre } from "./nombre.context";
++ import { useNombreStore } from "./nombre.store";
+
+export const Footer = () => {
+-  const { nombre } = useNombre();
++ const { nombre } = useNombreStore();
+  return (
+    <div>
+      <h2>Footer</h2>
+      <p>Nombre: {nombre}</p>
+    </div>
+  );
+};
 ```
 
 ---
