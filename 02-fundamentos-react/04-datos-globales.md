@@ -49,6 +49,8 @@ Ahí entran los estados globales.
 
 # Opción 1: Context de React
 
+_.\src\01-Context-React.tsx_
+
 ```tsx
 import React, { createContext, useContext, useState } from "react";
 
@@ -82,6 +84,86 @@ export const useNombre = () => {
 
   return context;
 };
+```
+
+_.\src\01-Context-React.tsx_
+
+```diff
+import React, { createContext, useContext, useState } from "react";
+
+interface NombreContextValue {
+  nombre: string;
+  setNombre: (nuevoNombre: string) => void;
+}
+
+const NombreContext = createContext<NombreContextValue | null>(null);
+
+interface Props {
+  children: React.ReactNode;
+}
+
+export const NombreProvider = ({ children }: Props) => {
+  const [nombre, setNombre] = useState("Pepe");
+
+  return (
+    <NombreContext.Provider value={{ nombre, setNombre }}>
+      {children}
+    </NombreContext.Provider>
+  );
+};
+
+export const useNombre = () => {
+  const context = useContext(NombreContext);
+
+  if (context === null) {
+    throw new Error("useNombre debe usarse dentro de NombreProvider");
+  }
+
+  return context;
+};
+
++ const Header = () => {
++   return <header style={{ background: "#e0f0ff", padding: "8px" }}>Header</header>;
++ };
++
++ const Body = () => {
++   const { nombre, setNombre } = useNombre();
++   return (
++     <main style={{ padding: "8px" }}>
++       <p>Body: {nombre}</p>
++       <input value={nombre} onChange={(e) => setNombre(e.target.value)} />
++     </main>
++   );
++ };
++
++ const Footer = () => {
++   return <footer style={{ background: "#e0f0ff", padding: "8px" }}>Footer</footer>;
++ };
++
++ export const ContextDemo = () => (
++   <NombreProvider>
++     <Header />
++     <Body />
++     <Footer />
++   </NombreProvider>
++ );
+```
+
+__
+
+```diff
++ import { ContextDemo } from "./01-Context-React"
+
+function App() {
+
+  return (
+    <>
++       <ContextDemo />
+    </>
+  )
+}
+
+export default App
 ```
 
 ---
