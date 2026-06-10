@@ -2,7 +2,7 @@
 
 Vamos a darle caña a la página principal.
 
-Antes de ponernos a promptear como si no hubiera un mañana, pensemos en que la cagamos al ir en modo prototipo:
+Antes de ponernos a promptear como si no hubiera un mañana, pensemos que si vamos a lo loco podemos encontrar problemas serios, por ejemplo en una tirada me paso que mezclo ShadCN con Tailwind 3:
 
 - Lo primero fue la configuración de ShadCN, que se lió y por sí solo bajo a tailwind 3, así que vamos a investigar un poco cómo configurar ShadCN con Tailwind 4
 
@@ -38,7 +38,7 @@ Vamos ahora a pedirle que ejecute ese skills
 Vamos a probar el skill que acabas de crear, dale caña
 ```
 
-Una vez que vemos que todo ok le indicamos que revise y mejor el skill con lo que ha aprendido, y que lo deje perfecto para que lo pueda usar cualquiera
+Una vez que vemos que todo ok le indicamos que revise y mejore el skill con lo que ha aprendido, y que lo deje perfecto para que lo pueda usar cualquiera
 
 ```
 Ahora que han funcionado, mejora el skill con lo que has aprendido, hazlo perfecto para que lo pueda usar cualquiera, revisa que no te hayas dejado nada, y que todo esté correcto, hazlo paso a paso y con comandos concretos
@@ -58,7 +58,7 @@ _./CLAUDE.md_
 - Siempre que necesites usar un icono, busca en lucide-react y úsalo, no te olvides de importarlo
 ```
 
-Para aprender tengo el contenido estático en un Headless CMS así directamente puedo darle acceso al propietario de la villa para que pueda modificar contenido.
+Para aprender tengo el contenido estático en un Headless CMS así directamente puedo darle acceso al propietario de la villa para que pueda modificar contenido (proyexto exampleOrg/DemoVacaionalWIP).
 
 Estando modo "IA a tope" podríamos directamente indicarle que creara el layout e incluso hiciera todo el setup para Content Island etc...
 
@@ -232,7 +232,7 @@ export const mapFullMainPageToVm = (content: FullMainPage): FullMainPageVm => {
 };
 ```
 
-_./src/pods/home/home.server.ts_
+_./src/pods/home/home.api.ts_
 
 ```tsx
 import { createServerFn } from "@tanstack/react-start";
@@ -276,7 +276,7 @@ Ahora exponemos el pod y la API para que lo llame la página principal (nos hace
 _./src/pods/home/index.tsx_
 
 ```tsx
-export { getHomePageContent } from "./home.server";
+export { getHomePageContent } from "./home.api";
 export { Home } from "./home.pod";
 ```
 
@@ -289,9 +289,9 @@ _./src/routes/index.tsx_
 ```ts
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/')({ component: App })
+export const Route = createFileRoute('/')({ component: HomePage })
 
-function App() {
+function HomePage() {
   return (
     <main>
     </main>
@@ -305,23 +305,21 @@ _./src/routes/index.tsx_
 
 ```diff
 import { createFileRoute } from '@tanstack/react-router';
-+ import { getHomePageContent } from '@/pods/home';
++ import { Home, getHomePageContent } from '@/pods/home';
 
 export const Route = createFileRoute('/')({
 + loader: async() =>  {
 +    const content = await getHomePageContent();
 +    return { content };
 + },
-  component: App
+  component: HomePage
 })
 
-function App() {
-  const { content } = Route.useLoaderData<{ content: FullMainPageVm }>();
+function HomePage() {
++  const { content } = Route.useLoaderData();
 
   return (
-+    <main className="page-wrap px-4 pb-8 pt-14">
-+      <h1 className="text-4xl font-bold">{content.headerSection.villaName}</h1>
-+    </main>
++   return <Home content={content} />;
   )
 }
 ```
